@@ -16,16 +16,11 @@ class Ball:
     def draw(self, window):
         pygame.draw.circle(window, self.ball_color, (self.x - self.radius, self.y - self.radius), self.radius)
 
-    def move_x(self, x):
-        self.x += x
+    # def move_x(self, x):
+    #     self.x += x
     
-    def move_y(self, y):
-        self.y += y
+    # def move_y(self, y):
+    #     self.y += y
 
-    def check_wall_collision(self):
-        if self.top <= 0 or self.bottom >= SCREEN_HEIGHT:
-            
-
-        
-
-        
+    # def check_wall_collision(self):
+        # if self.top <= 0 or self.bottom >= SCREEN_HEIGHT:

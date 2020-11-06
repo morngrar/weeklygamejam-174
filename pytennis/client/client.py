@@ -33,8 +33,8 @@ court_color = (0,133,102)
 court_stripes = (255,255,255)
 
 #Ball speed, remove later
-ball_speed_x = 7
-ball_speed_y = 7
+# ball_speed_x = 7
+# ball_speed_y = 7
 
 """ main loop """
 run = True
@@ -55,8 +55,8 @@ while run:
 
     # Mechanics
     player_p1.move(*(pygame.mouse.get_pos()))   # Player moves after mouse
-    tennis_ball.move_x(ball_speed_x)
-    tennis_ball.move_y(ball_speed_y)
+    # tennis_ball.move_x(ball_speed_x)
+    # tennis_ball.move_y(ball_speed_y)
     
     # Update screen
     redrawGameWindow()
