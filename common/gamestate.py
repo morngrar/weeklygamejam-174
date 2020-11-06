@@ -1,4 +1,7 @@
+"""common
 
+This module has common functionality to both client and server
+"""
 
 class GameState:
     def __init__(self):
