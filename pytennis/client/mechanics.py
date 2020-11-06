@@ -1,12 +1,14 @@
-import numpy as np
 import pygame
+from client import player
+from client import ball
 
 gravity = 9.81
-clock = pygame.time.Clock()
 
-# Mechanics of own racket hitting ball
+
+
+
+# Mechanics of racket hitting ball
 # def racketHit():
-    # Hent vektoren for min racket
-    # Finn ut hvordan ballen treffer racket
-    # Basert på hvor ballen treffer racket, hastighet på racket, få ballen til å bevege seg deretter
+    # if ball_x < racket_x + ball_width and ball_x + racket_width > racket_x and ball_y < racket_y + ball_height and racket_height + ball_y > racket_y:
+ 
 
