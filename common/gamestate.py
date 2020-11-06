@@ -16,7 +16,7 @@ class GameState:
         self.ownRacketVelocity = [0,0]
         
     # def impact():
-
+    
     # Når man treffer skal x*negativ, y vil 
     #  z skal påvirkes av "tyngdekraft"
     # , men økes i første omgang som følge av vinkel på racket
