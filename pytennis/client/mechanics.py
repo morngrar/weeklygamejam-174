@@ -1,7 +1,12 @@
+import numpy as np
+import pygame
 
+gravity = 9.81
+clock = pygame.time.Clock()
 
 # Mechanics of own racket hitting ball
-def racketHit():
-    # Hent racket sin VelRackIni (Velocity til racket ved impact) m/s
-    # Hent ballen sin VelBallIni (Velocity til ball ved impact) m/s
-    # VelRackIni + VelRackFin = VelBallIni + VelBallFin
+# def racketHit():
+    # Hent vektoren for min racket
+    # Finn ut hvordan ballen treffer racket
+    # Basert på hvor ballen treffer racket, hastighet på racket, få ballen til å bevege seg deretter
+
