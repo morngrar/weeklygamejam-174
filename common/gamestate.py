@@ -1,4 +1,7 @@
+"""gamestate
 
+This module has common functionality regarding gamestate to both client and server
+"""
 
 class GameState:
     def __init__(self):
