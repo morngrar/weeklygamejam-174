@@ -1,6 +1,6 @@
-"""common
+"""gamestate
 
-This module has common functionality to both client and server
+This module has common functionality regarding gamestate to both client and server
 """
 
 class GameState:
