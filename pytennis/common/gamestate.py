@@ -19,6 +19,7 @@ class GameState:
         self.ballVelocity = [0, 0, 0]
         self.opponentPoints = 0
         self.ownPoints = 0
+        self.gameStarted = False
         self.gameOver = False
         self.ownRacketTilt = 1.0
         self.ownRacketVelocity = [0,0]
@@ -34,6 +35,7 @@ class GameState:
         s += f"\tBall velocity: {self.ballVelocity}\n"
         s += f"\tOpponents points: {self.opponentPoints}\n"
         s += f"\tOwn points: {self.ownPoints}\n"
+        s += f"\tGame started: {self.gameStarted}\n"
         s += f"\tGame over: {self.gameOver}\n"
         s += f"\tOwn racket tilt: {self.ownRacketTilt}\n"
         s += f"\tOwn racket velocity: {self.ownRacketVelocity}\n"
