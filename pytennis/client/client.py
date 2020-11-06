@@ -28,6 +28,7 @@ player = pygame.Rect(SCREEN_WIDTH - (PLAYER_WIDTH/2), (SCREEN_HEIGHT/2) - (PLAYE
 
 
 court_color = (0,133,102)
+court_stripes = (0,0,0)
 
 """ main loop """
 run = True
@@ -41,7 +42,9 @@ while run:
             sys.exit()
 
     # Visuals
-    tennis_ball.draw()
+    window.fill(court_color)
+    tennis_ball.draw(window)
+    pygame.draw.aaline(window, court_stripes, (SCREEN_WIDTH/2,0), (SCREEN_WIDTH/2, SCREEN_HEIGHT))
 
     
     # Update screen
