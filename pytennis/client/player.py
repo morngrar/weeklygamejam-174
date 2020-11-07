@@ -7,7 +7,7 @@ class Player:
     def __init__(self, width, height):
         self.pos = pygame.math.Vector3(640,760,0)
         self.vel = pygame.math.Vector3(0,0,0)
-        self.last_pos = self.pos
+        self.last_pos = pygame.math.Vector3(self.pos)
         self.width = width
         self.height = height
         self.player_color = (210, 105, 30)
@@ -58,5 +58,5 @@ class Player:
         window.blit(new_image, (self.pos.x, self.pos.y))
 
     def move(self, x, y):
-        self.pos.x = x - (self.width/2)
-        self.pos.y = y - (self.height/2)
+        self.pos.x = x #- (self.width/2)
+        self.pos.y = y #- (self.height/2)
