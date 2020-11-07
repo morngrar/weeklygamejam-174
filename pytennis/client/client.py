@@ -107,30 +107,7 @@ while run:
     if tennis_ball.y >= SCREEN_HEIGHT + tennis_ball.radius or tennis_ball.y <= 0 + tennis_ball.radius:
         ball_speed_y *= -1
         tennis_ball.move_y(ball_speed_y)
-    
-    # # Player hits ball
-    # if tennis_ball.x <= player_p1.x + player_p1.width and tennis_ball.x >= player_p1.x:
-    #     if tennis_ball.y + tennis_ball.radius <= (player_p1.y + player_p1.height) + \
-    #         (((tennis_ball.x - player_p1.x)) * player_p1.yaw_angle/100*(player_p1.yaw)) \
-    #              and tennis_ball.y + tennis_ball.radius >= player_p1.y:
 
-    #         print(tennis_ball.x , tennis_ball.y, player_p1.x, player_p1.y)
-    #         print((player_p1.y + player_p1.height) + (((tennis_ball.x-player_p1.x))*player_p1.yaw_angle/100*(player_p1.yaw)))
-   
-    # Player hits ball
-    # if tennis_ball.x <= player_p1.x + player_p1.width and tennis_ball.x >= player_p1.x:
-    #     if player_p1.yaw == 0:
-    #       if tennis_ball.y + tennis_ball.radius <= (player_p1.y + player_p1.height)\
-    #             and tennis_ball.y + tennis_ball.radius >= player_p1.y:
-    #             print("flat")
-    #     elif player_p1.yaw == -1:
-    #         if tennis_ball.y + tennis_ball.radius <= (player_p1.y + player_p1.height) + (((tennis_ball.x-player_p1.x))*player_p1.yaw_angle/100*(player_p1.yaw))\
-    #             and tennis_ball.y + tennis_ball.radius >= player_p1.y:
-    #             print("\\")
-    #     elif player_p1.yaw == 1:
-    #         if tennis_ball.y + tennis_ball.radius <= (player_p1.y + player_p1.height) + (((tennis_ball.x-player_p1.x))*player_p1.yaw_angle/100*(player_p1.yaw))\
-    #             and tennis_ball.y + tennis_ball.radius >= player_p1.y:
-    #             print("/")
 
     # angled distance check tactic for collision
     line = player_p1.get_center_line()
