@@ -7,6 +7,7 @@ from client import ball
 from client import player
 from client import statusbar
 
+pygame.init()
 os.environ['SDL_VIDEO_CENTERED'] = '1'  # center window on screen
 
 SCREEN_WIDTH = 800
