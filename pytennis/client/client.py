@@ -68,6 +68,11 @@ court_color = (0,133,102)
 court_stripes = (255,255,255)
 
 #Ball speed, remove later
+ball_velocity = pygame.math.Vector3()
+ball_velocity.x = 7
+ball_velocity.y = 7
+ball_velocity.z = 0
+
 ball_speed_x = 7
 ball_speed_y = 7
 ball_hit = False
@@ -97,44 +102,39 @@ while run:
     # Mechanics
     player_p1.move(*(pygame.mouse.get_pos()))   # Player moves after mouse
     # pygame.mouse.set_visible(False)
-    tennis_ball.x += ball_speed_x
-    tennis_ball.y += ball_speed_y
+    tennis_ball.pos += ball_velocity
     
     # Ball wall collision
-    if tennis_ball.x + tennis_ball.radius >= SCREEN_WIDTH  or tennis_ball.x <= 0 + tennis_ball.radius:
-        ball_speed_x *= -1
-        tennis_ball.move_x(ball_speed_x)
+    if tennis_ball.pos.x + tennis_ball.radius >= SCREEN_WIDTH  or tennis_ball.pos.x <= 0 + tennis_ball.radius:
+        ball_velocity.x *= -1 
+        
     
-    if tennis_ball.y >= SCREEN_HEIGHT + tennis_ball.radius or tennis_ball.y <= 0 + tennis_ball.radius:
-        ball_speed_y *= -1
-        tennis_ball.move_y(ball_speed_y)
+    if tennis_ball.pos.y >= SCREEN_HEIGHT + tennis_ball.radius or tennis_ball.pos.y <= 0 + tennis_ball.radius:
+        ball_velocity.y *= -1 
 
 
     # angled distance check tactic for collision
     line = player_p1.get_center_line()
-    distance_to_ball = dist(line, tennis_ball.x, tennis_ball.y)
-    if tennis_ball.y >= SCREEN_HEIGHT/2:        # If the ball is on player's side of court, allow for collision
+    distance_to_ball = dist(line, tennis_ball.pos.x, tennis_ball.pos.y)
+    if tennis_ball.pos.y >= SCREEN_HEIGHT/2:        # If the ball is on player's side of court, allow for collision
         if distance_to_ball <= tennis_ball.radius:
             if(ball_hit == False):
                 ball_hit = True
                 collisionNo += 1
                 print("COLLISION!", collisionNo)
-                ball_speed_x *= -1
-                tennis_ball.move_x(ball_speed_x)
-                ball_speed_y *= -1
-                tennis_ball.move_y(ball_speed_y)
+                ball_velocity.x *= -1
+                ball_velocity.y *= -1
+               
             
 
-    if tennis_ball.y + tennis_ball.radius <= SCREEN_HEIGHT/2:
+    if tennis_ball.pos.y + tennis_ball.radius <= SCREEN_HEIGHT/2:
         ball_hit = False
-        
-         
 
     # Player can't move to other side of court or "out of window"
-    if player_p1.x >= SCREEN_WIDTH - (player_p1.width*2):
-        player_p1.x = SCREEN_WIDTH - player_p1.width 
-    elif player_p1.x <= 0:
-        player_p1.x = 0
+    if player_p1.pos.x >= SCREEN_WIDTH - (player_p1.width*2):
+        player_p1.pos.x = SCREEN_WIDTH - player_p1.width 
+    elif player_p1.pos.x <= 0:
+        player_p1.pos.x = 0
     
     # Player can't move to other side of court
     if pygame.mouse.get_pos()[1] + player_p1.height <= SCREEN_HEIGHT/2:
