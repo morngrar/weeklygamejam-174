@@ -79,8 +79,11 @@ ball_hit = False
 
 """ main loop """
 run = True
+i = 0
 while run:
+
     clock.tick(27)
+    i += 1
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -100,8 +103,13 @@ while run:
     pygame.draw.line(window, (200, 200, 0), start, end)
 
     # Mechanics
+    if i > 5:
+        player_p1.last_pos = player_p1.pos
+        i = 0
     player_p1.move(*(pygame.mouse.get_pos()))   # Player moves after mouse
-    # pygame.mouse.set_visible(False)
+    player_p1.vel = player_p1.last_pos - player_p1.pos  # Velocity vector is last position - current position
+    
+    
     tennis_ball.pos += ball_velocity
     
     # Ball wall collision
@@ -118,17 +126,19 @@ while run:
     distance_to_ball = dist(line, tennis_ball.pos.x, tennis_ball.pos.y)
     if tennis_ball.pos.y >= SCREEN_HEIGHT/2:        # If the ball is on player's side of court, allow for collision
         if distance_to_ball <= tennis_ball.radius:
-            if(ball_hit == False):
-                ball_hit = True
-                collisionNo += 1
-                print("COLLISION!", collisionNo)
-                ball_velocity.x *= -1
-                ball_velocity.y *= -1
-               
+            # if(ball_hit == False):
+            #     ball_hit = True
+            collisionNo += 1
+            print("COLLISION!", collisionNo)
+            print("Pre ", ball_velocity)
+            ball_velocity += player_p1.vel
+            print("Post ", ball_velocity)
+
+            print("player-vel", player_p1.vel)
             
 
-    if tennis_ball.pos.y + tennis_ball.radius <= SCREEN_HEIGHT/2:
-        ball_hit = False
+    # if tennis_ball.pos.y + tennis_ball.radius <= SCREEN_HEIGHT/2:
+    #     ball_hit = False
 
     # Player can't move to other side of court or "out of window"
     if player_p1.pos.x >= SCREEN_WIDTH - (player_p1.width*2):
@@ -155,27 +165,6 @@ while run:
     if not(keys[pygame.K_a] or keys[pygame.K_d]):  # reset yaw from \ or / to _
         player_p1.yaw = 0
     
-
-
-
-    """
-     something like:
-        if tennis_ball.x is within player's hitbox x-values (x position and width):
-            if (ball.y+ball.radius) is within player's hitbox y-values(y position and height/2):
-                ball hits player, direction is shifted ( velocity * (-1)) (and direction changed if yawed etc)
-    """
-
-    """
-        something like:
-        if ball.x >= SCREEN_WIDTH or ball.x <= 0 or ball.y >= SCREEN_HEIGHT or ball.y <= 0:
-            doSomethingCoolHere()
-
-    """
-
-
-
-
-
 
     # Update screen
     redrawGameWindow()
