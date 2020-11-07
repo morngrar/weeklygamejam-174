@@ -81,32 +81,41 @@ while run:
     # Key bindings
     keys = pygame.key.get_pressed()
 
-    # Tilt racket
+    # yaw racket
     if keys[pygame.K_a]:
-        # tilt like this \
-        player_p1.tilt = -1
+        # yaw like this \
+        player_p1.yaw = -1
 
     elif keys[pygame.K_d]:
-        # tilt like this /
-        player_p1.tilt = 1
+        # yaw like this /
+        player_p1.yaw = 1
 
-    if not(keys[pygame.K_a] or keys[pygame.K_d]):  # reset tilt from \ or / to _
-        player_p1.tilt = 0
-    
-
+    if not(keys[pygame.K_a] or keys[pygame.K_d]):  # reset yaw from \ or / to _
+        player_p1.yaw = 0
 
 
-    # Player hits ball
+
+
+   # Player hits ball
     if tennis_ball.x <= player_p1.x + player_p1.width and tennis_ball.x >= player_p1.x:
-        if tennis_ball.y + tennis_ball.radius <= player_p1.y + player_p1.height\
+        if player_p1.yaw == 0:
+          if tennis_ball.y + tennis_ball.radius <= (player_p1.y + player_p1.height)\
              and tennis_ball.y + tennis_ball.radius >= player_p1.y:
-            print(tennis_ball.x , tennis_ball.y, player_p1.x, player_p1.y)
+              print("flat")
+        elif player_p1.yaw == -1:
+            if tennis_ball.y + tennis_ball.radius <= (player_p1.y + player_p1.height) - (((tennis_ball.x-player_p1.x))*player_p1.yaw_angle/100*(player_p1.yaw))\
+             and tennis_ball.y + tennis_ball.radius >= player_p1.y - (((tennis_ball.x-player_p1.x))*player_p1.yaw_angle/100*(player_p1.yaw)):
+              print("\\")
+        elif player_p1.yaw == 1:
+            if tennis_ball.y + tennis_ball.radius <= (player_p1.y + player_p1.height) + (((tennis_ball.x-player_p1.x))*player_p1.yaw_angle/100*(player_p1.yaw))\
+             and tennis_ball.y + tennis_ball.radius >= player_p1.y - (((tennis_ball.x-player_p1.x))*player_p1.yaw_angle/100*(player_p1.yaw)):
+              print("/")
 
     """
      something like:
         if tennis_ball.x is within player's hitbox x-values (x position and width):
             if (ball.y+ball.radius) is within player's hitbox y-values(y position and height/2):
-                ball hits player, direction is shifted ( velocity * (-1)) (and direction changed if tilted etc)
+                ball hits player, direction is shifted ( velocity * (-1)) (and direction changed if yawed etc)
     """
 
     """

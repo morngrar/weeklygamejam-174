@@ -15,7 +15,7 @@ class Player:
         self.image.set_colorkey((0, 0, 0))  # make background of player invisible when rotating
         self.image.fill(self.player_color)
         self.rect = self.image.get_rect()
-        self.rect.center = (self.width // 2 , self.height // 2)
+        self.rect.center = (self.width // 2, self.height // 2)
 
     def draw(self, window):
         old_center = self.rect.center
