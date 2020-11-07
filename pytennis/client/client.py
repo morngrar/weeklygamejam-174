@@ -88,10 +88,10 @@ while run:
     player_p1.draw(window)
     pygame.draw.aaline(window, court_stripes, (0, SCREEN_HEIGHT/2), (SCREEN_WIDTH, SCREEN_HEIGHT/2))
 
-    line = player_p1.get_center_line()
-    start = (line[0], line[1])
-    end = (line[2], line[3])
-    pygame.draw.line(window, (200, 200, 0), start, end)
+    # line = player_p1.get_center_line()
+    # start = (line[0], line[1])
+    # end = (line[2], line[3])
+    # pygame.draw.line(window, (200, 200, 0), start, end)
 
     # Mechanics
     player_p1.move(*(pygame.mouse.get_pos()))   # Player moves after mouse
