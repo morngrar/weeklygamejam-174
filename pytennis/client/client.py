@@ -1,7 +1,7 @@
 # Made with python 3.8
 
 import pygame
-import os 
+import os
 import sys
 from client import ball
 from client import player
@@ -18,7 +18,6 @@ BALL_HEIGHT = 20
 PLAYER_WIDTH = 80
 PLAYER_HEIGHT = 10
 
-collisionNo = 0
 
 window = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Tennis game")
@@ -28,35 +27,23 @@ image_background_original = pygame.image.load(os.path.join('resources', 'pytenni
 image_background = pygame.transform.scale(image_background_original, (SCREEN_WIDTH, SCREEN_HEIGHT-30))
 
 
-
-def dist(line, x3, y3): # x3,y3 is the point
+def dist(line, x3, y3):
+    """Returns shortest distance from line to point"""
     x1, y1, x2, y2 = line
     px = x2-x1
     py = y2-y1
-
     norm = px*px + py*py
     if norm == 0:
         return None
-
-    u =  ((x3 - x1) * px + (y3 - y1) * py) / float(norm)
-
+    u = ((x3 - x1) * px + (y3 - y1) * py) / float(norm)
     if u > 1:
         u = 1
     elif u < 0:
         u = 0
-
     x = x1 + u * px
     y = y1 + u * py
-
     dx = x - x3
     dy = y - y3
-
-    # Note: If the actual distance does not matter,
-    # if you only want to compare what this function
-    # returns to other results of this function, you
-    # can just return the squared distance instead
-    # (i.e. remove the sqrt) to gain a little performance
-
     dist = (dx*dx + dy*dy)**.5
 
     return dist
@@ -65,18 +52,42 @@ def dist(line, x3, y3): # x3,y3 is the point
 def main():
     pass
 
-statusbar = statusbar.Statusbar(SCREEN_WIDTH, 30)
+def p1_serve():
+    tennis_ball.pos.x = SCREEN_WIDTH / 2
+    tennis_ball.pos.y = SCREEN_HEIGHT*0.75
+    ball_velocity = pygame.math.Vector3(0, 0, 0)
+
+def p2_serve():
+    tennis_ball.pos.x = SCREEN_WIDTH / 2
+    tennis_ball.pos.y = SCREEN_HEIGHT*0.25
+    ball_velocity = pygame.math.Vector3(0, 0, 0)
+
 tennis_ball = ball.Ball()
 player_p1 = player.Player(PLAYER_WIDTH, PLAYER_HEIGHT)
 
-#Ball speed, remove later
-ball_speed_x = 0
-ball_speed_y = 0
+court_color = (0, 133, 102)
+court_stripes = (255, 255, 255)
 
-""" main loop """
+# Ball speed, remove later
+ball_velocity = pygame.math.Vector3()
+
+BALL_FRICTION_FACTOR = 0.2
+BALL_MAX_SPEED = 40
+
+YAW_VELOCITY = pygame.math.Vector3(0, -1, 0)
+YAW_ANGLING = pygame.math.Vector3(-1, 0, 0)   # positive when /
+YAW_ACCEL = 30
+
+pygame.mouse.set_visible(False)
+
+p1_serve()
+
 run = True
+i = 0
 while run:
-    clock.tick(27)
+
+    clock.tick(100)
+    i += 1
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -84,68 +95,98 @@ while run:
             pygame.quit
             sys.exit()
 
-    # Visuals
-    window.blit(image_background, (0, statusbar.height))
-    statusbar.draw(window)
-    tennis_ball.draw(window)
-    player_p1.draw(window)
 
-    # line = player_p1.get_center_line()
-    # start = (line[0], line[1])
-    # end = (line[2], line[3])
-    # pygame.draw.line(window, (200, 200, 0), start, end)
 
-    # Mechanics
-    player_p1.move(*(pygame.mouse.get_pos()))   # Player moves after mouse
-    pygame.mouse.set_visible(False)
-    tennis_ball.move_x(ball_speed_x)
-    tennis_ball.move_y(ball_speed_y)
-    
-    # Ball wall collision
-    if tennis_ball.x >= SCREEN_WIDTH + tennis_ball.radius or tennis_ball.x <= 0 + tennis_ball.radius:
-        ball_speed_x *= -1
-        tennis_ball.move_x(ball_speed_x)
-    
-    if tennis_ball.y >= SCREEN_HEIGHT + tennis_ball.radius or tennis_ball.y <= 0 + tennis_ball.radius:
-        ball_speed_y *= -1
-        tennis_ball.move_y(ball_speed_y)
-    
+    ###########################################################
+    # Ball wall collision -- remove when ready for multiplayer
+    ###########################################################
+    if (
+        tennis_ball.pos.x + tennis_ball.radius >= SCREEN_WIDTH 
+        or tennis_ball.pos.x <= 0 + tennis_ball.radius
+    ):
+        tennis_ball.pos.x = SCREEN_WIDTH / 2
+        tennis_ball.pos.y = SCREEN_HEIGHT*0.75
+        ball_velocity = pygame.math.Vector3(0, 0, 0)
 
-    # angled distance check tactic for collision
+    if tennis_ball.pos.y <= 0 + tennis_ball.radius:
+        ball_velocity = -(ball_velocity)
+
+    if tennis_ball.pos.y >= SCREEN_HEIGHT:
+        tennis_ball.pos.y = SCREEN_HEIGHT*0.75
+        ball_velocity = pygame.math.Vector3(0, 0, 0)
+    ##########################################################s
+
+
+    # find and draw collision line on player 1
     line = player_p1.get_center_line()
-    distance_to_ball = dist(line, tennis_ball.x, tennis_ball.y)
-    if distance_to_ball <= tennis_ball.radius:
-        collisionNo += 1
-        print("COLLISION!", collisionNo)
+    start = (line[0], line[1])
+    end = (line[2], line[3])
+    pygame.draw.line(window, (200, 200, 0), start, end)
+
+    distance_to_ball = dist(line, tennis_ball.pos.x, tennis_ball.pos.y)
+
+    # If the ball is on player's side            # and distance is small enough to ball
+    if tennis_ball.pos.y >= SCREEN_HEIGHT/2 and distance_to_ball <= tennis_ball.radius:
+        if ball_velocity.y >= 0:
+            ball_velocity = pygame.math.Vector3(player_p1.vel) - ball_velocity 
+
+            # adds a vector force for paddle yaw
+            ball_velocity += (YAW_VELOCITY + YAW_ANGLING * player_p1.yaw) * YAW_ACCEL 
+
+            # decelerate (slows down ball if paddle is still)
+            ball_velocity *= 0.6
+
+        # if speed isn't limited, paddle can clip through ball
+        while ball_velocity.magnitude() > BALL_MAX_SPEED:       
+            ball_velocity *= 0.9
+
+    player_p1.move(*(pygame.mouse.get_pos()))   # Paddle moves after mouse
+
+    if i > 5:   # for velocity to not be 0, only sample intermittently
+        player_p1.last_pos.x, player_p1.last_pos.y = player_p1.pos.x, player_p1.pos.y
+        i = 0
+    player_p1.vel = (player_p1.pos - player_p1.last_pos)*2
+
+    tennis_ball.pos += ball_velocity * BALL_FRICTION_FACTOR
+
+
 
     # Player can't move to other side of court or "out of window"
-    if player_p1.x >= SCREEN_WIDTH - (player_p1.width*2):
-        player_p1.x = SCREEN_WIDTH - player_p1.width 
-    elif player_p1.x <= 0:
-        player_p1.x = 0
-    
-    if player_p1.y <= SCREEN_HEIGHT/2 or player_p1.y <= 0:
-        player_p1.y = SCREEN_HEIGHT/2
+    if player_p1.pos.x >= SCREEN_WIDTH - (player_p1.width):
+        player_p1.pos.x = SCREEN_WIDTH - player_p1.width
+    elif player_p1.pos.x <= 0:
+        player_p1.pos.x = 0
 
-    
+
+
+    # Player can't move to other side of court
+    if pygame.mouse.get_pos()[1] + player_p1.height <= SCREEN_HEIGHT/2:
+        pygame.mouse.set_pos(
+            [pygame.mouse.get_pos()[0], SCREEN_HEIGHT/2 + player_p1.height])
+
     # Key bindings
-    keys = pygame.key.get_pressed()
+    buttons = pygame.mouse.get_pressed()
+
 
     # Yaw racket
-    if keys[pygame.K_a]:
+    if buttons[2] and not buttons[0]:
         # yaw like this \
         player_p1.yaw = -1
 
-    elif keys[pygame.K_d]:
+    elif buttons[0] and not buttons[2]:
         # yaw like this /
         player_p1.yaw = 1
+    else:
+        player_p1.yaw = 0  # flat racket
 
-    if not(keys[pygame.K_a] or keys[pygame.K_d]):  # reset yaw from \ or / to _
-        player_p1.yaw = 0
-    
     # Update screen
+    # Visuals
+    window.fill(court_color)
+    pygame.draw.aaline(window, court_stripes,
+                       (0, SCREEN_HEIGHT/2), (SCREEN_WIDTH, SCREEN_HEIGHT/2))
+    tennis_ball.draw(window)
+    player_p1.draw(window)
     pygame.display.update()
-""" main loop end """
 
 
 if __name__ == "__main__":

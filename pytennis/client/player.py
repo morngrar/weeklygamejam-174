@@ -3,10 +3,12 @@ import pygame
 
 from math import sin, cos, radians
 
+
 class Player:
     def __init__(self, width, height):
-        self.x = 640
-        self.y = 760
+        self.pos = pygame.math.Vector3(640,760,0)
+        self.vel = pygame.math.Vector3(0,0,0)
+        self.last_pos = pygame.math.Vector3(self.pos)
         self.width = width
         self.height = height
         self.player_color = (210, 105, 30)
@@ -19,13 +21,13 @@ class Player:
         self.rect.center = (self.width // 2, self.height // 2)
 
     def get_center_line(self):
-        x1 = self.x
-        x2 = self.x + self.width
-        y1 = self.y + self.height/2
+        x1 = self.pos.x
+        x2 = self.pos.x + self.width
+        y1 = self.pos.y + self.height/2
         y2 = y1
 
         cx = 0
-        cy = self.y+self.height
+        cy = self.pos.y+self.height
 
         if self.yaw > 0:
             cx = x2
@@ -37,12 +39,12 @@ class Player:
         cosang = cos(theta)
         sinang = sin(theta)
 
-        tx1 = self.x-cx
-        ty1 = self.y-cy
+        tx1 = self.pos.x-cx
+        ty1 = self.pos.y-cy
         p1x = ( tx1*cosang + ty1*sinang) + cx
         p1y = (-tx1*sinang + ty1*cosang) + cy
-        tx2 = self.x + self.width-cx
-        ty2 = self.y-cy
+        tx2 = self.pos.x + self.width-cx
+        ty2 = self.pos.y-cy
         p2x = ( tx2*cosang + ty2*sinang) + cx
         p2y = (-tx2*sinang + ty2*cosang) + cy
 
@@ -54,8 +56,8 @@ class Player:
         new_image = pygame.transform.rotate(self.image, rot)
         self.rect = new_image.get_rect()
         self.rect.center = old_center
-        window.blit(new_image, (self.x, self.y))
+        window.blit(new_image, (self.pos.x, self.pos.y))
 
     def move(self, x, y):
-        self.x = x - (self.width/2)
-        self.y = y - (self.height/2)
+        self.pos.x = x #- (self.width/2)
+        self.pos.y = y #- (self.height/2)
