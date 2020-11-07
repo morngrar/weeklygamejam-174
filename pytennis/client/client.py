@@ -90,7 +90,13 @@ while run:
                 ball hits player, direction is shifted ( velocity * (-1)) (and direction changed if tilted etc)
     """
 
+    # Ball out of screen
+    """
+        something like:
+        if ball.x >= SCREEN_WIDTH or ball.x <= 0 or ball.y >= SCREEN_HEIGHT or ball.y <= 0:
+            doSomethingCoolHere()
 
+    """
 
 
 
