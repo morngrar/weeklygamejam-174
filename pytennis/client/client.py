@@ -68,13 +68,9 @@ court_color = (0,133,102)
 court_stripes = (255,255,255)
 
 #Ball speed, remove later
-ball_velocity = pygame.math.Vector3()
-ball_velocity.x = 7
-ball_velocity.y = 7
-ball_velocity.z = 0
+ball_velocity = pygame.math.Vector3(7,7,0)
 
-ball_speed_x = 7
-ball_speed_y = 7
+
 ball_hit = False
 
 """ main loop """
@@ -103,7 +99,7 @@ while run:
     pygame.draw.line(window, (200, 200, 0), start, end)
 
     # Mechanics
-    if i > 5:
+    if i > 500:
         player_p1.last_pos = player_p1.pos
         i = 0
     player_p1.move(*(pygame.mouse.get_pos()))   # Player moves after mouse
@@ -130,9 +126,9 @@ while run:
             #     ball_hit = True
             collisionNo += 1
             print("COLLISION!", collisionNo)
-            print("Pre ", ball_velocity)
+            print("Last", player_p1.last_pos)
             ball_velocity += player_p1.vel
-            print("Post ", ball_velocity)
+            print("Current ", player_p1.pos)
 
             print("player-vel", player_p1.vel)
             
