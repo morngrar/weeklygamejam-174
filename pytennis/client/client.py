@@ -107,8 +107,8 @@ while run:
              and tennis_ball.y + tennis_ball.radius >= player_p1.y - (((tennis_ball.x-player_p1.x))*player_p1.yaw_angle/100*(player_p1.yaw)):
               print("\\")
         elif player_p1.yaw == 1:
-            if tennis_ball.y + tennis_ball.radius <= (player_p1.y + player_p1.height) - (((tennis_ball.x-player_p1.x))*player_p1.yaw_angle/100*(player_p1.yaw*(-1)))\
-             and tennis_ball.y + tennis_ball.radius >= player_p1.y + (((tennis_ball.x-player_p1.x))*player_p1.yaw_angle/100*(player_p1.yaw*(-1))):
+            if tennis_ball.y + tennis_ball.radius <= (player_p1.y + player_p1.height) + (((tennis_ball.x-player_p1.x))*player_p1.yaw_angle/100)\
+             and tennis_ball.y + tennis_ball.radius >= player_p1.y - (((tennis_ball.x-player_p1.x))*player_p1.yaw_angle/100):
               print("/")
 
     """
