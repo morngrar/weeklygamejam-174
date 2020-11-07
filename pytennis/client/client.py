@@ -78,6 +78,25 @@ while run:
 
     if not(keys[pygame.K_a] or keys[pygame.K_d]):  # reset tilt from \ or / to _
         player_p1.tilt = 0
+    
+
+
+
+    # Ball hits player
+    """
+        something like:
+        if ball.x is within player's hitbox x-values (x position and width):
+            if (ball.y+ball.radius) is within player's hitbox y-values(y position and height/2):
+                ball hits player, direction is shifted ( velocity * (-1)) (and direction changed if tilted etc)
+    """
+
+
+
+
+
+
+
+
     # Update screen
     redrawGameWindow()
 """ main loop end """
