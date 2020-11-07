@@ -10,7 +10,7 @@ from client import statusbar
 os.environ['SDL_VIDEO_CENTERED'] = '1'  # center window on screen
 
 SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 1000
+SCREEN_HEIGHT = 1310
 
 BALL_WIDTH = 20
 BALL_HEIGHT = 20
@@ -22,6 +22,11 @@ collisionNo = 0
 window = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Tennis game")
 clock = pygame.time.Clock()
+
+image_background_original = pygame.image.load(os.path.join('resources', 'pytennis_court.png'))
+image_background = pygame.transform.scale(image_background_original, (SCREEN_WIDTH, SCREEN_HEIGHT-30))
+
+
 
 def dist(line, x3, y3): # x3,y3 is the point
     x1, y1, x2, y2 = line
@@ -55,9 +60,6 @@ def dist(line, x3, y3): # x3,y3 is the point
 
     return dist
 
-def redrawGameWindow():
-    pygame.display.update()
-
 
 def main():
     pass
@@ -65,9 +67,6 @@ def main():
 statusbar = statusbar.Statusbar(SCREEN_WIDTH, 30)
 tennis_ball = ball.Ball()
 player_p1 = player.Player(PLAYER_WIDTH, PLAYER_HEIGHT)
-
-court_color = (0,133,102)
-court_stripes = (255,255,255)
 
 #Ball speed, remove later
 ball_speed_x = 0
@@ -85,11 +84,10 @@ while run:
             sys.exit()
 
     # Visuals
-    window.fill(court_color)
+    window.blit(image_background, (0, statusbar.height))
     statusbar.draw(window)
     tennis_ball.draw(window)
     player_p1.draw(window)
-    pygame.draw.aaline(window, court_stripes, (0, SCREEN_HEIGHT/2), (SCREEN_WIDTH, SCREEN_HEIGHT/2))
 
     # line = player_p1.get_center_line()
     # start = (line[0], line[1])
@@ -111,29 +109,6 @@ while run:
         ball_speed_y *= -1
         tennis_ball.move_y(ball_speed_y)
     
-    # # Player hits ball
-    # if tennis_ball.x <= player_p1.x + player_p1.width and tennis_ball.x >= player_p1.x:
-    #     if tennis_ball.y + tennis_ball.radius <= (player_p1.y + player_p1.height) + \
-    #         (((tennis_ball.x - player_p1.x)) * player_p1.yaw_angle/100*(player_p1.yaw)) \
-    #              and tennis_ball.y + tennis_ball.radius >= player_p1.y:
-
-    #         print(tennis_ball.x , tennis_ball.y, player_p1.x, player_p1.y)
-    #         print((player_p1.y + player_p1.height) + (((tennis_ball.x-player_p1.x))*player_p1.yaw_angle/100*(player_p1.yaw)))
-   
-    # Player hits ball
-    # if tennis_ball.x <= player_p1.x + player_p1.width and tennis_ball.x >= player_p1.x:
-    #     if player_p1.yaw == 0:
-    #       if tennis_ball.y + tennis_ball.radius <= (player_p1.y + player_p1.height)\
-    #             and tennis_ball.y + tennis_ball.radius >= player_p1.y:
-    #             print("flat")
-    #     elif player_p1.yaw == -1:
-    #         if tennis_ball.y + tennis_ball.radius <= (player_p1.y + player_p1.height) + (((tennis_ball.x-player_p1.x))*player_p1.yaw_angle/100*(player_p1.yaw))\
-    #             and tennis_ball.y + tennis_ball.radius >= player_p1.y:
-    #             print("\\")
-    #     elif player_p1.yaw == 1:
-    #         if tennis_ball.y + tennis_ball.radius <= (player_p1.y + player_p1.height) + (((tennis_ball.x-player_p1.x))*player_p1.yaw_angle/100*(player_p1.yaw))\
-    #             and tennis_ball.y + tennis_ball.radius >= player_p1.y:
-    #             print("/")
 
     # angled distance check tactic for collision
     line = player_p1.get_center_line()
@@ -167,30 +142,8 @@ while run:
     if not(keys[pygame.K_a] or keys[pygame.K_d]):  # reset yaw from \ or / to _
         player_p1.yaw = 0
     
-
-
-
-    """
-     something like:
-        if tennis_ball.x is within player's hitbox x-values (x position and width):
-            if (ball.y+ball.radius) is within player's hitbox y-values(y position and height/2):
-                ball hits player, direction is shifted ( velocity * (-1)) (and direction changed if yawed etc)
-    """
-
-    """
-        something like:
-        if ball.x >= SCREEN_WIDTH or ball.x <= 0 or ball.y >= SCREEN_HEIGHT or ball.y <= 0:
-            doSomethingCoolHere()
-
-    """
-
-
-
-
-
-
     # Update screen
-    redrawGameWindow()
+    pygame.display.update()
 """ main loop end """
 
 
