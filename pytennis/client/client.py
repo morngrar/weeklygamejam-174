@@ -64,6 +64,7 @@ def p2_serve():
 
 tennis_ball = ball.Ball()
 player_p1 = player.Player(PLAYER_WIDTH, PLAYER_HEIGHT)
+statusbar = statusbar.Statusbar(SCREEN_WIDTH, 30)
 
 court_color = (0, 133, 102)
 court_stripes = (255, 255, 255)
@@ -181,9 +182,8 @@ while run:
 
     # Update screen
     # Visuals
-    window.fill(court_color)
-    pygame.draw.aaline(window, court_stripes,
-                       (0, SCREEN_HEIGHT/2), (SCREEN_WIDTH, SCREEN_HEIGHT/2))
+    window.blit(image_background, (0, statusbar.height))
+    statusbar.draw(window)
     tennis_ball.draw(window)
     player_p1.draw(window)
     pygame.display.update()
