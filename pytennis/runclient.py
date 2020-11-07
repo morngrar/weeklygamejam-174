@@ -1,5 +1,5 @@
-from client import testclient
+from client import client
 
 
-if __name__ == "__main__":
-    testclient.main()
+if __name__=="__main__":
+    client.main()
