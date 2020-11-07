@@ -16,10 +16,43 @@ BALL_HEIGHT = 20
 PLAYER_WIDTH = 80
 PLAYER_HEIGHT = 10
 
+collisionNo = 0
+
 window = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Tennis game")
 clock = pygame.time.Clock()
 
+def dist(line, x3, y3): # x3,y3 is the point
+    x1, y1, x2, y2 = line
+    px = x2-x1
+    py = y2-y1
+
+    norm = px*px + py*py
+    if norm == 0:
+        return None
+
+    u =  ((x3 - x1) * px + (y3 - y1) * py) / float(norm)
+
+    if u > 1:
+        u = 1
+    elif u < 0:
+        u = 0
+
+    x = x1 + u * px
+    y = y1 + u * py
+
+    dx = x - x3
+    dy = y - y3
+
+    # Note: If the actual distance does not matter,
+    # if you only want to compare what this function
+    # returns to other results of this function, you
+    # can just return the squared distance instead
+    # (i.e. remove the sqrt) to gain a little performance
+
+    dist = (dx*dx + dy*dy)**.5
+
+    return dist
 
 def redrawGameWindow():
     pygame.display.update()
@@ -35,8 +68,8 @@ court_color = (0,133,102)
 court_stripes = (255,255,255)
 
 #Ball speed, remove later
-ball_speed_x = 0
-ball_speed_y = 0
+ball_speed_x = 7
+ball_speed_y = 7
 
 """ main loop """
 run = True
@@ -54,6 +87,11 @@ while run:
     tennis_ball.draw(window)
     player_p1.draw(window)
     pygame.draw.aaline(window, court_stripes, (0, SCREEN_HEIGHT/2), (SCREEN_WIDTH, SCREEN_HEIGHT/2))
+
+    # line = player_p1.get_center_line()
+    # start = (line[0], line[1])
+    # end = (line[2], line[3])
+    # pygame.draw.line(window, (200, 200, 0), start, end)
 
     # Mechanics
     player_p1.move(*(pygame.mouse.get_pos()))   # Player moves after mouse
@@ -80,19 +118,26 @@ while run:
     #         print((player_p1.y + player_p1.height) + (((tennis_ball.x-player_p1.x))*player_p1.yaw_angle/100*(player_p1.yaw)))
    
     # Player hits ball
-    if tennis_ball.x <= player_p1.x + player_p1.width and tennis_ball.x >= player_p1.x:
-        if player_p1.yaw == 0:
-          if tennis_ball.y + tennis_ball.radius <= (player_p1.y + player_p1.height)\
-             and tennis_ball.y + tennis_ball.radius >= player_p1.y:
-              print("flat")
-        elif player_p1.yaw == -1:
-            if tennis_ball.y + tennis_ball.radius <= (player_p1.y + player_p1.height) - (((tennis_ball.x-player_p1.x))*player_p1.yaw_angle/100*(player_p1.yaw))\
-             and tennis_ball.y + tennis_ball.radius >= player_p1.y - (((tennis_ball.x-player_p1.x))*player_p1.yaw_angle/100*(player_p1.yaw)):
-              print("\\")
-        elif player_p1.yaw == 1:
-            if tennis_ball.y + tennis_ball.radius <= (player_p1.y + player_p1.height) + (((tennis_ball.x-player_p1.x))*player_p1.yaw_angle/100*(player_p1.yaw))\
-             and tennis_ball.y + tennis_ball.radius >= player_p1.y - (((tennis_ball.x-player_p1.x))*player_p1.yaw_angle/100*(player_p1.yaw)):
-              print("/")
+    # if tennis_ball.x <= player_p1.x + player_p1.width and tennis_ball.x >= player_p1.x:
+    #     if player_p1.yaw == 0:
+    #       if tennis_ball.y + tennis_ball.radius <= (player_p1.y + player_p1.height)\
+    #             and tennis_ball.y + tennis_ball.radius >= player_p1.y:
+    #             print("flat")
+    #     elif player_p1.yaw == -1:
+    #         if tennis_ball.y + tennis_ball.radius <= (player_p1.y + player_p1.height) + (((tennis_ball.x-player_p1.x))*player_p1.yaw_angle/100*(player_p1.yaw))\
+    #             and tennis_ball.y + tennis_ball.radius >= player_p1.y:
+    #             print("\\")
+    #     elif player_p1.yaw == 1:
+    #         if tennis_ball.y + tennis_ball.radius <= (player_p1.y + player_p1.height) + (((tennis_ball.x-player_p1.x))*player_p1.yaw_angle/100*(player_p1.yaw))\
+    #             and tennis_ball.y + tennis_ball.radius >= player_p1.y:
+    #             print("/")
+
+    # angled distance check tactic for collision
+    line = player_p1.get_center_line()
+    distance_to_ball = dist(line, tennis_ball.x, tennis_ball.y)
+    if distance_to_ball <= tennis_ball.radius:
+        collisionNo += 1
+        print("COLLISION!", collisionNo)
 
     # Player can't move to other side of court or "out of window"
     if player_p1.x >= SCREEN_WIDTH - (player_p1.width*2):
