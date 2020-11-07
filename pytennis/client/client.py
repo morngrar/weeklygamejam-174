@@ -5,6 +5,7 @@ import os
 import sys
 from client import ball
 from client import player
+from client import statusbar
 
 os.environ['SDL_VIDEO_CENTERED'] = '1'  # center window on screen
 
@@ -28,6 +29,7 @@ def redrawGameWindow():
 def main():
     pass
 
+statusbar = statusbar.Statusbar(SCREEN_WIDTH, 30)
 tennis_ball = ball.Ball()
 player_p1 = player.Player(PLAYER_WIDTH, PLAYER_HEIGHT)
 
@@ -55,6 +57,7 @@ while run:
 
     # Visuals
     window.fill(court_color)
+    statusbar.draw(window)
     tennis_ball.draw(window)
     player_p1.draw(window)
     pygame.draw.aaline(window, court_stripes, (0, SCREEN_HEIGHT/2), (SCREEN_WIDTH, SCREEN_HEIGHT/2))
