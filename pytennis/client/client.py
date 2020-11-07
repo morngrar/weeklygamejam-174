@@ -84,6 +84,10 @@ ball_velocity = pygame.math.Vector3()
 BALL_FRICTION_FACTOR = 0.2
 BALL_MAX_SPEED = 40
 
+YAW_VELOCITY = pygame.math.Vector3(0, -1, 0)
+YAW_ANGLING = pygame.math.Vector3(-1, 0, 0)   # positive when /
+YAW_ACCEL = 10
+
 pygame.mouse.set_visible(False)
 
 p1_serve()
@@ -129,7 +133,7 @@ while run:
     # If the ball is on player's side of court, allow for collision
     if tennis_ball.pos.y >= SCREEN_HEIGHT/2 and distance_to_ball <= tennis_ball.radius:
         if ball_velocity.y >= 0:
-            ball_velocity = pygame.math.Vector3(player_p1.vel) - ball_velocity
+            ball_velocity = pygame.math.Vector3(player_p1.vel) - ball_velocity + (YAW_VELOCITY+YAW_ANGLING*player_p1.yaw)*YAW_ACCEL
             ball_velocity *= 0.6
         while ball_velocity.magnitude() > BALL_MAX_SPEED:
             ball_velocity *= 0.9
