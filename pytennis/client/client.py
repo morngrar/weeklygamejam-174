@@ -76,7 +76,6 @@ def main():
                 player_p2.x, player_p2.y
             )
             player_p2.yaw = state.opponentRacketYaw
-            #player_p2.yaw *= -1
 
 
 
