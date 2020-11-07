@@ -81,17 +81,17 @@ while run:
    
     # Player hits ball
     if tennis_ball.x <= player_p1.x + player_p1.width and tennis_ball.x >= player_p1.x:
-        if player_p1.yaw == 0:          
+        if player_p1.yaw == 0:
           if tennis_ball.y + tennis_ball.radius <= (player_p1.y + player_p1.height)\
-              and tennis_ball.y + tennis_ball.radius >= player_p1.y:
+             and tennis_ball.y + tennis_ball.radius >= player_p1.y:
               print("flat")
         elif player_p1.yaw == -1:
-            if tennis_ball.y + tennis_ball.radius <= (player_p1.y + player_p1.height) + (((tennis_ball.x-player_p1.x))*player_p1.yaw_angle/100*(player_p1.yaw))\
-              and tennis_ball.y + tennis_ball.radius >= player_p1.y:
+            if tennis_ball.y + tennis_ball.radius <= (player_p1.y + player_p1.height) - (((tennis_ball.x-player_p1.x))*player_p1.yaw_angle/100*(player_p1.yaw))\
+             and tennis_ball.y + tennis_ball.radius >= player_p1.y - (((tennis_ball.x-player_p1.x))*player_p1.yaw_angle/100*(player_p1.yaw)):
               print("\\")
         elif player_p1.yaw == 1:
             if tennis_ball.y + tennis_ball.radius <= (player_p1.y + player_p1.height) + (((tennis_ball.x-player_p1.x))*player_p1.yaw_angle/100*(player_p1.yaw))\
-              and tennis_ball.y + tennis_ball.radius >= player_p1.y:
+             and tennis_ball.y + tennis_ball.radius >= player_p1.y - (((tennis_ball.x-player_p1.x))*player_p1.yaw_angle/100*(player_p1.yaw)):
               print("/")
 
     # Player can't move to other side of court or "out of window"
