@@ -41,8 +41,8 @@ court_color = (0,133,102)
 court_stripes = (255,255,255)
 
 #Ball speed, remove later
-# ball_speed_x = 7
-# ball_speed_y = 7
+ball_speed_x = 0
+ball_speed_y = 0
 
 """ main loop """
 run = True
@@ -64,8 +64,19 @@ while run:
 
     # Mechanics
     player_p1.move(*(pygame.mouse.get_pos()))   # Player moves after mouse
-    # tennis_ball.move_x(ball_speed_x)
-    # tennis_ball.move_y(ball_speed_y)
+    tennis_ball.move_x(ball_speed_x)
+    tennis_ball.move_y(ball_speed_y)
+    
+    # Ball wall collision
+    if tennis_ball.x >= SCREEN_WIDTH + tennis_ball.radius or tennis_ball.x <= 0 + tennis_ball.radius:
+        ball_speed_x *= -1
+        tennis_ball.move_x(ball_speed_x)
+    
+    if tennis_ball.y >= SCREEN_HEIGHT + tennis_ball.radius or tennis_ball.y <= 0 + tennis_ball.radius:
+        ball_speed_y *= -1
+        tennis_ball.move_y(ball_speed_y)
+
+
 
     # Key bindings
     keys = pygame.key.get_pressed()
@@ -85,15 +96,19 @@ while run:
 
 
 
-    # Ball hits player
+    # Player hits ball
+    if tennis_ball.x <= player_p1.x + player_p1.width and tennis_ball.x >= player_p1.x:
+        if tennis_ball.y + tennis_ball.radius <= player_p1.y + player_p1.height\
+             and tennis_ball.y + tennis_ball.radius >= player_p1.y:
+            print(tennis_ball.x , tennis_ball.y, player_p1.x, player_p1.y)
+
     """
-        something like:
-        if ball.x is within player's hitbox x-values (x position and width):
+     something like:
+        if tennis_ball.x is within player's hitbox x-values (x position and width):
             if (ball.y+ball.radius) is within player's hitbox y-values(y position and height/2):
                 ball hits player, direction is shifted ( velocity * (-1)) (and direction changed if tilted etc)
     """
 
-    # Ball out of screen
     """
         something like:
         if ball.x >= SCREEN_WIDTH or ball.x <= 0 or ball.y >= SCREEN_HEIGHT or ball.y <= 0:
