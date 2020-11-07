@@ -62,7 +62,6 @@ while run:
     redrawGameWindow()
 """ main loop end """
 
-
 if __name__=="__main__":
     main()
 
