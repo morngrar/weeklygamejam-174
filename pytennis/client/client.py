@@ -16,6 +16,10 @@ BALL_HEIGHT = 20
 PLAYER_WIDTH = 80
 PLAYER_HEIGHT = 10
 
+GRAVITY = pygame.math.Vector3(0,0,-10)
+PITCH_FORCE = pygame.math.Vector3(0, 0, 2)
+BOUNCE_FACTOR = PITCH_FORCE * 0.9
+bounce = BOUNCE_FACTOR
 
 window = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Tennis game")
@@ -51,12 +55,16 @@ def main():
 def p1_serve():
     tennis_ball.pos.x = SCREEN_WIDTH / 2
     tennis_ball.pos.y = SCREEN_HEIGHT*0.75
+    tennis_ball.pos.z = 10
     ball_velocity = pygame.math.Vector3(0, 0, 0)
+
 
 def p2_serve():
     tennis_ball.pos.x = SCREEN_WIDTH / 2
     tennis_ball.pos.y = SCREEN_HEIGHT*0.25
+    tennis_ball.pos.z = 10
     ball_velocity = pygame.math.Vector3(0, 0, 0)
+
 
 tennis_ball = ball.Ball()
 player_p1 = player.Player(PLAYER_WIDTH, PLAYER_HEIGHT)
@@ -69,6 +77,8 @@ ball_velocity = pygame.math.Vector3()
 
 BALL_FRICTION_FACTOR = 0.2
 BALL_MAX_SPEED = 40
+
+
 
 YAW_VELOCITY = pygame.math.Vector3(0, -1, 0)
 YAW_ANGLING = pygame.math.Vector3(-1, 0, 0)   # positive when /
@@ -84,6 +94,8 @@ while run:
 
     clock.tick(100)
     i += 1
+
+    
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -105,7 +117,9 @@ while run:
         ball_velocity = pygame.math.Vector3(0, 0, 0)
 
     if tennis_ball.pos.y <= 0 + tennis_ball.radius:
-        ball_velocity = -(ball_velocity)
+        #ball_velocity = -(ball_velocity)
+        ball_velocity.x *= -1
+        ball_velocity.y *= -1
 
     if tennis_ball.pos.y >= SCREEN_HEIGHT:
         tennis_ball.pos.y = SCREEN_HEIGHT*0.75
@@ -124,17 +138,30 @@ while run:
     # If the ball is on player's side            # and distance is small enough to ball
     if tennis_ball.pos.y >= SCREEN_HEIGHT/2 and distance_to_ball <= tennis_ball.radius:
         if ball_velocity.y >= 0:
-            ball_velocity = pygame.math.Vector3(player_p1.vel) - ball_velocity 
+            bounce = BOUNCE_FACTOR * 1
 
+            ball_velocity = pygame.math.Vector3(player_p1.vel) - ball_velocity # Hit the ball
+    
             # adds a vector force for paddle yaw
             ball_velocity += (YAW_VELOCITY + YAW_ANGLING * player_p1.yaw) * YAW_ACCEL 
 
             # decelerate (slows down ball if paddle is still)
             ball_velocity *= 0.6
 
+            # Upward hit
+            ball_velocity += PITCH_FORCE
+
         # if speed isn't limited, paddle can clip through ball
         while ball_velocity.magnitude() > BALL_MAX_SPEED:       
             ball_velocity *= 0.9
+
+    
+    if tennis_ball.pos.z <= 0:
+        ball_velocity = bounce * 1
+        bounce *= 0.9
+
+    print(tennis_ball.pos.z)
+    
 
     player_p1.move(*(pygame.mouse.get_pos()))   # Paddle moves after mouse
 
@@ -143,9 +170,13 @@ while run:
         i = 0
     player_p1.vel = (player_p1.pos - player_p1.last_pos)*2
 
+    
+    ball_velocity += GRAVITY    # Gravity working on ball
+    if ball_velocity.z < 0:
+        ball_velocity.z = 0
     tennis_ball.pos += ball_velocity * BALL_FRICTION_FACTOR
-
-
+    
+    
 
     # Player can't move to other side of court or "out of window"
     if player_p1.pos.x >= SCREEN_WIDTH - (player_p1.width):
@@ -159,6 +190,7 @@ while run:
     if pygame.mouse.get_pos()[1] + player_p1.height <= SCREEN_HEIGHT/2:
         pygame.mouse.set_pos(
             [pygame.mouse.get_pos()[0], SCREEN_HEIGHT/2 + player_p1.height])
+
 
     # Key bindings
     buttons = pygame.mouse.get_pressed()
