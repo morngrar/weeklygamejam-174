@@ -31,10 +31,6 @@ def main():
 tennis_ball = ball.Ball()
 player_p1 = player.Player(PLAYER_WIDTH, PLAYER_HEIGHT)
 
-ball = pygame.Rect(SCREEN_WIDTH/2 - (BALL_WIDTH/2), SCREEN_HEIGHT/2 - (BALL_HEIGHT/2) ,BALL_WIDTH,BALL_HEIGHT)
-player = pygame.Rect(SCREEN_WIDTH - (PLAYER_WIDTH/2), (SCREEN_HEIGHT/2) - (PLAYER_HEIGHT/2), PLAYER_WIDTH, PLAYER_HEIGHT)
-
-
 court_color = (0,133,102)
 court_stripes = (255,255,255)
 
@@ -61,6 +57,7 @@ while run:
 
     # Mechanics
     player_p1.move(*(pygame.mouse.get_pos()))   # Player moves after mouse
+    pygame.mouse.set_visible(False)
     tennis_ball.move_x(ball_speed_x)
     tennis_ball.move_y(ball_speed_y)
     
@@ -72,38 +69,64 @@ while run:
     if tennis_ball.y >= SCREEN_HEIGHT + tennis_ball.radius or tennis_ball.y <= 0 + tennis_ball.radius:
         ball_speed_y *= -1
         tennis_ball.move_y(ball_speed_y)
+    
+    # # Player hits ball
+    # if tennis_ball.x <= player_p1.x + player_p1.width and tennis_ball.x >= player_p1.x:
+    #     if tennis_ball.y + tennis_ball.radius <= (player_p1.y + player_p1.height) + \
+    #         (((tennis_ball.x - player_p1.x)) * player_p1.yaw_angle/100*(player_p1.yaw)) \
+    #              and tennis_ball.y + tennis_ball.radius >= player_p1.y:
 
+    #         print(tennis_ball.x , tennis_ball.y, player_p1.x, player_p1.y)
+    #         print((player_p1.y + player_p1.height) + (((tennis_ball.x-player_p1.x))*player_p1.yaw_angle/100*(player_p1.yaw)))
+   
+    # Player hits ball
+    if tennis_ball.x <= player_p1.x + player_p1.width and tennis_ball.x >= player_p1.x:
+        if player_p1.yaw == 0:
+          if tennis_ball.y + tennis_ball.radius <= (player_p1.y + player_p1.height)\
+              and tennis_ball.y + tennis_ball.radius >= player_p1.y:
+              print("flat")
+        elif player_p1.yaw == -1:
+            if tennis_ball.y + tennis_ball.radius <= (player_p1.y + player_p1.height) + (((tennis_ball.x-player_p1.x))*player_p1.yaw_angle/100*(player_p1.yaw)):
+            #  and tennis_ball.y + tennis_ball.radius >= player_p1.y:
+              print("\\")
+        elif player_p1.yaw == 1:
+            if tennis_ball.y + tennis_ball.radius <= (player_p1.y + player_p1.height) + (((tennis_ball.x-player_p1.x))*player_p1.yaw_angle/100*(player_p1.yaw)):
+            #  and tennis_ball.y + tennis_ball.radius >= player_p1.y:
+              print("/")
 
+    # Player can't move to other side of court or "out of window"
+    if player_p1.x >= SCREEN_WIDTH - (player_p1.width*2):
+        player_p1.x = SCREEN_WIDTH - player_p1.width 
+    elif player_p1.x <= 0:
+        player_p1.x = 0
+    
+    if player_p1.y <= SCREEN_HEIGHT/2 or player_p1.y <= 0:
+        player_p1.y = SCREEN_HEIGHT/2
 
+    
     # Key bindings
     keys = pygame.key.get_pressed()
 
-    # Tilt racket
+    # Yaw racket
     if keys[pygame.K_a]:
-        # tilt like this \
-        player_p1.tilt = -1
+        # yaw like this \
+        player_p1.yaw = -1
 
     elif keys[pygame.K_d]:
-        # tilt like this /
-        player_p1.tilt = 1
+        # yaw like this /
+        player_p1.yaw = 1
 
-    if not(keys[pygame.K_a] or keys[pygame.K_d]):  # reset tilt from \ or / to _
-        player_p1.tilt = 0
+    if not(keys[pygame.K_a] or keys[pygame.K_d]):  # reset yaw from \ or / to _
+        player_p1.yaw = 0
     
 
 
-
-    # Player hits ball
-    if tennis_ball.x <= player_p1.x + player_p1.width and tennis_ball.x >= player_p1.x:
-        if tennis_ball.y + tennis_ball.radius <= player_p1.y + player_p1.height\
-             and tennis_ball.y + tennis_ball.radius >= player_p1.y:
-            print(tennis_ball.x , tennis_ball.y, player_p1.x, player_p1.y)
 
     """
      something like:
         if tennis_ball.x is within player's hitbox x-values (x position and width):
             if (ball.y+ball.radius) is within player's hitbox y-values(y position and height/2):
-                ball hits player, direction is shifted ( velocity * (-1)) (and direction changed if tilted etc)
+                ball hits player, direction is shifted ( velocity * (-1)) (and direction changed if yawed etc)
     """
 
     """
