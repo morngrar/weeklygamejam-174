@@ -47,7 +47,7 @@ def game_handler(player_pair):
 def stateswap(state):
     state.ownPos, state.opponentPos = state.opponentPos, state.ownPos
     state.ownPoints, state.opponentPoints = state.opponentPoints, state.ownPoints
-    state.ownRacketTilt, state.opponentRacketTilt = state.opponentRacketTilt, state.ownRacketTilt
+    state.ownRacketYaw, state.opponentRacketYaw = state.opponentRacketYaw, state.ownRacketYaw
     state.ownRacketVelocity, state.opponentRacketVelocity = state.opponentRacketVelocity, state.ownRacketVelocity
     
 

@@ -4,8 +4,10 @@ import pygame
 import os 
 import sys
 import pickle
+import socket
 
 from common.gamestate import GameState
+from common import networking
 from client import ball
 from client import player
 
@@ -19,7 +21,12 @@ BALL_HEIGHT = 20
 PLAYER_WIDTH = 80
 PLAYER_HEIGHT = 10
 
+def flip_coords(x, y):
+    """Flips the coordinates, so that they're seen from the other side of table"""
 
+    x = SCREEN_WIDTH - x
+    y = SCREEN_HEIGHT - y
+    return (x, y)
 
 def redrawGameWindow():
     pygame.display.update()
@@ -35,10 +42,7 @@ def main():
 
     tennis_ball = ball.Ball()
     player_p1 = player.Player(PLAYER_WIDTH, PLAYER_HEIGHT)
-
-    ball = pygame.Rect(SCREEN_WIDTH/2 - (BALL_WIDTH/2), SCREEN_HEIGHT/2 - (BALL_HEIGHT/2) ,BALL_WIDTH,BALL_HEIGHT)
-    player = pygame.Rect(SCREEN_WIDTH - (PLAYER_WIDTH/2), (SCREEN_HEIGHT/2) - (PLAYER_HEIGHT/2), PLAYER_WIDTH, PLAYER_HEIGHT)
-
+    player_p2 = player.Player(PLAYER_WIDTH, PLAYER_HEIGHT)
 
     court_color = (0,133,102)
     court_stripes = (255,255,255)
@@ -46,8 +50,10 @@ def main():
     #Ball speed, remove later
     ball_speed_x = 0
     ball_speed_y = 0
+    ball_speed_z = 0
 
     run = True
+    state = GameState()
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
         server.connect((networking.HOST, networking.PORT))
@@ -58,6 +64,20 @@ def main():
             if not data:
                 run = False
             state = pickle.loads(data)
+
+            # Update values from game state
+            tennis_ball.x, tennis_ball.y, tennis_ball.z = state.ballPos
+            ball_speed_x, ball_speed_y, ball_speed_z = state.ballVelocity
+            ball_speed_x, ball_speed_y = flip_coords(
+                ball_speed_x, ball_speed_y
+            )
+            player_p2.x, player_p2.y, player_p2.z = state.opponentPos
+            player_p2.x, player_p2.y = flip_coords(
+                player_p2.x, player_p2.y
+            )
+            player_p2.yaw = state.opponentRacketYaw
+            #player_p2.yaw *= -1
+
 
 
             # Handle movement/collision anc stuff
@@ -71,6 +91,7 @@ def main():
             window.fill(court_color)
             tennis_ball.draw(window)
             player_p1.draw(window)
+            player_p2.draw(window)
             pygame.draw.aaline(window, court_stripes, (0, SCREEN_HEIGHT/2), (SCREEN_WIDTH, SCREEN_HEIGHT/2))
 
             # Mechanics
@@ -92,17 +113,17 @@ def main():
             # Key bindings
             keys = pygame.key.get_pressed()
 
-            # Tilt racket
+            # yaw racket
             if keys[pygame.K_a]:
-                # tilt like this \
-                player_p1.tilt = -1
+                # yaw like this \
+                player_p1.yaw = -1
 
             elif keys[pygame.K_d]:
-                # tilt like this /
-                player_p1.tilt = 1
+                # yaw like this /
+                player_p1.yaw = 1
 
-            if not(keys[pygame.K_a] or keys[pygame.K_d]):  # reset tilt from \ or / to _
-                player_p1.tilt = 0
+            if not(keys[pygame.K_a] or keys[pygame.K_d]):  # reset yaw from \ or / to _
+                player_p1.yaw = 0
             
 
             # Player hits ball
@@ -115,7 +136,7 @@ def main():
             something like:
                 if tennis_ball.x is within player's hitbox x-values (x position and width):
                     if (ball.y+ball.radius) is within player's hitbox y-values(y position and height/2):
-                        ball hits player, direction is shifted ( velocity * (-1)) (and direction changed if tilted etc)
+                        ball hits player, direction is shifted ( velocity * (-1)) (and direction changed if yaw etc)
             """
 
             """
@@ -127,6 +148,12 @@ def main():
 
             # Update screen
             redrawGameWindow()
+
+            # update state
+            state.ballPos = [tennis_ball.x, tennis_ball.y, tennis_ball.z]
+            state.ballVelocity = [ball_speed_x, ball_speed_y, ball_speed_z]
+            state.ownPos = [player_p1.x, player_p1.y, player_p1.z]
+            state.ownRacketYaw = player_p1.yaw
 
             # send new state to server
             server.sendall(pickle.dumps(state))

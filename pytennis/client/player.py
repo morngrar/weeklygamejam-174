@@ -6,6 +6,7 @@ class Player:
     def __init__(self, width, height):
         self.x = 640
         self.y = 760
+        self.z = 0
         self.width = width
         self.height = height
         self.player_color = (210, 105, 30)
