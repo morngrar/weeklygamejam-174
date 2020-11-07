@@ -183,9 +183,9 @@ while run:
     # Update screen
     # Visuals
     window.blit(image_background, (0, statusbar.height))
-    statusbar.draw(window)
     tennis_ball.draw(window)
     player_p1.draw(window)
+    statusbar.draw(window)
     pygame.display.update()
 
 
