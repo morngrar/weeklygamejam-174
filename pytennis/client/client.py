@@ -161,19 +161,19 @@ while run:
             [pygame.mouse.get_pos()[0], SCREEN_HEIGHT/2 + player_p1.height])
 
     # Key bindings
-    keys = pygame.key.get_pressed()
+    buttons = pygame.mouse.get_pressed()
+
 
     # Yaw racket
-    if keys[pygame.K_a]:
+    if buttons[2] and not buttons[0]:
         # yaw like this \
         player_p1.yaw = -1
 
-    elif keys[pygame.K_d]:
+    elif buttons[0] and not buttons[2]:
         # yaw like this /
         player_p1.yaw = 1
-
-    if not(keys[pygame.K_a] or keys[pygame.K_d]):  # reset yaw from \ or / to _
-        player_p1.yaw = 0
+    else:
+        player_p1.yaw = 0  # flat racket
 
     # Update screen
     # Visuals
