@@ -37,12 +37,3 @@ class GameState:
         s += f"\tOwn racket tilt: {self.ownRacketTilt}\n"
         s += f"\tOwn racket velocity: {self.ownRacketVelocity}\n"
 
-        
-
-        
-    # def impact():
-    
-    # Når man treffer skal x*negativ, y vil 
-    #  z skal påvirkes av "tyngdekraft"
-    # , men økes i første omgang som følge av vinkel på racket
-
