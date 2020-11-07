@@ -9,8 +9,8 @@ class Player:
         self.width = width
         self.height = height
         self.player_color = (210, 105, 30)
-        self.tilt = 0       # Which way to rotate: -1 = \ , 0 = __ , 1 = /
-        self.angle = 25     # How many degrees to rotate
+        self.yaw = 0       # Which way to rotate: -1 = \ , 0 = __ , 1 = /
+        self.yaw_angle = 25     # How many degrees to rotate in the horizontal plane, as seen top down
         self.image = pygame.Surface((80, 10))
         self.image.set_colorkey((0, 0, 0))  # make background of player invisible when rotating
         self.image.fill(self.player_color)
@@ -19,7 +19,7 @@ class Player:
 
     def draw(self, window):
         old_center = self.rect.center
-        rot = self.angle*self.tilt
+        rot = self.yaw_angle*self.yaw
         new_image = pygame.transform.rotate(self.image, rot)
         self.rect = new_image.get_rect()
         self.rect.center = old_center
