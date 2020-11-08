@@ -4,8 +4,7 @@ import pygame
 from pygame.math import Vector2
 import os
 import sys
-from tkinter import *
-from tkinter import messagebox
+
 
 import pickle
 import socket
@@ -68,6 +67,7 @@ def dist(line, x3, y3):
     return dist
 
 
+
 def show_end_screen():
     global p1_score
     global opponent_score
@@ -77,15 +77,6 @@ def show_end_screen():
         winner = "YOU WON"
     else:
         winner = "OPPONENT WON"
-
-    Tk().wm_withdraw() #to hide the main window
-    res = messagebox.askquestion(winner,  
-                         'New Game?') 
-    if res == 'yes' : 
-        reset_scores()          
-    else: 
-        pygame.quit
-        sys.exit()
     
     
 p1 = 1
