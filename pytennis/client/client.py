@@ -76,6 +76,7 @@ def main():
     tennis_ball = ball.Ball()
     player_p1 = player.Player(PLAYER_WIDTH, PLAYER_HEIGHT)
     player_p2 = player.Player(PLAYER_WIDTH, PLAYER_HEIGHT)
+    player_p2.yaw_angle *= -1
 
     court_color = (0, 133, 102)
     court_stripes = (255, 255, 255)
@@ -131,7 +132,10 @@ def main():
 
         player_p2.pos = state.opponentPos
         player_p2.pos = flip_coords(player_p2.pos)
+        player_p2.pos.x -= player_p2.width
+        player_p2.pos.y -= player_p2.height
         player_p2.yaw = state.opponentRacketYaw
+        player_p2.yaw *= -1
 
         # Handle movement/collision and stuff
 
@@ -166,6 +170,7 @@ def main():
         # If the ball is on player's side            # and distance is small enough to ball
         if tennis_ball.pos.y >= SCREEN_HEIGHT/2 and distance_to_ball <= tennis_ball.radius:
             if ball_velocity.y >= 0:
+                print("collision")
                 ball_velocity = Vector2(player_p1.vel) - ball_velocity 
 
                 # adds a vector force for paddle yaw
@@ -197,9 +202,10 @@ def main():
 
 
         # Player can't move to other side of court
-        if pygame.mouse.get_pos()[1] + player_p1.height <= SCREEN_HEIGHT/2:
-            pygame.mouse.set_pos(
-                [pygame.mouse.get_pos()[0], SCREEN_HEIGHT/2 + player_p1.height])
+        ### DISABLED FOR TESTING
+        # if pygame.mouse.get_pos()[1] + player_p1.height <= SCREEN_HEIGHT/2:
+        #     pygame.mouse.set_pos(
+        #         [pygame.mouse.get_pos()[0], SCREEN_HEIGHT/2 + player_p1.height])
 
         # Key bindings
         buttons = pygame.mouse.get_pressed()
