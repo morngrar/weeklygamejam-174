@@ -20,7 +20,7 @@ pygame.init()
 os.environ['SDL_VIDEO_CENTERED'] = '1'  # center window on screen
 
 SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 1310
+SCREEN_HEIGHT = 1000
 
 BALL_WIDTH = 20
 BALL_HEIGHT = 20
