@@ -9,6 +9,7 @@ import socket
 
 from common.gamestate import GameState
 from common import networking, screen, player, ball
+from common.playerpacket import PlayerPacket
 
 from client.statusbar import Statusbar
 
@@ -63,13 +64,6 @@ p1_score = 0
 opponent_score = 0
 winning_score = 3#15
    
-def reset_scores():
-    global p1_score
-    global opponent_score
-    p1_score = 0
-    opponent_score = 0
-
-
         
 def main():
 
@@ -155,7 +149,7 @@ def main():
     YAW_ANGLING = Vector2(-1, 0)   # positive when /
     YAW_ACCEL = 30
 
-    pygame.mouse.set_visible(False)
+    #pygame.mouse.set_visible(False)
 
     p1_serve()
 
@@ -184,14 +178,19 @@ def main():
     statusbar = Statusbar(screen.WIDTH, 30)
     
     while run:
-        clock.tick(200)     # refresh rate
-        i += 1              # counter for paddle velocity
-
 
         # handle x-button
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+        
+
+        # send player state to server
+        server.sendall(
+            pickle.dumps(
+                PlayerPacket(player_p1.pos, player_p1.yaw)
+            )
+        )
 
         data = server.recv(networking.MAX_PACKET_SIZE)
         if not data:
@@ -200,9 +199,6 @@ def main():
 
         # Update values from game state
         tennis_ball.pos = state.ballPos
-        tennis_ball.pos = flip_coords(tennis_ball.pos)
-        ball_velocity = state.ballVelocity
-        ball_velocity = -(ball_velocity)
         global p1_score
         global opponent_score
         p1_score = state.ownPoints
@@ -213,68 +209,11 @@ def main():
         statusbar.opponentscore = opponent_score
 
         player_p2.pos = state.opponentPos
-        player_p2.pos = flip_coords(player_p2.pos)
-        player_p2.pos.x -= player_p2.width
-        player_p2.pos.y -= player_p2.height
         player_p2.yaw = state.opponentRacketYaw
-        player_p2.yaw *= -1
 
-
-
-
-
-        ###########################################################
-        # Ball wall collision
-        ###########################################################
-
-        if (
-            tennis_ball.pos.x + tennis_ball.radius < 0
-            or tennis_ball.pos.x - tennis_ball.radius > screen.WIDTH
-            or tennis_ball.pos.y + tennis_ball.radius > screen.HEIGHT
-            or tennis_ball.pos.y - tennis_ball.radius < 0
-        ):
-
-            if ball_velocity.y != 0 and not state.gameOver:
-                # Check whose player's side of the court the ball has been played out on
-                # If the ball was played out on the opponents side, add point to me
-                if tennis_ball.pos.y <= (screen.HEIGHT/2): 
-                    add_point(p1)   # Add point to "me"
-                    
-                else: 
-                    add_point(opponent) # Add point to opponent
-        
-            check_if_someone_won()
-
-        ##########################################################s
-
-
-
-        line = player_p1.get_center_line()
-        distance_to_ball = dist(line, tennis_ball.pos.x, tennis_ball.pos.y)
-
-        # If the ball is on player's side            # and distance is small enough to ball
-        if tennis_ball.pos.y >= screen.HEIGHT/2 and distance_to_ball <= tennis_ball.radius:
-            if ball_velocity.y >= 0:
-                ball_velocity = Vector2(player_p1.vel) - ball_velocity 
-
-                # adds a vector force for paddle yaw
-                ball_velocity += (YAW_VELOCITY + YAW_ANGLING * player_p1.yaw) * YAW_ACCEL 
-
-                # decelerate (slows down ball if paddle is still)
-                ball_velocity *= 0.6
-
-                # if speed isn't limited, paddle can clip through ball
-                if ball_velocity.magnitude() > BALL_MAX_SPEED:       
-                    ball_velocity *= 0.5
 
         player_p1.move(*(pygame.mouse.get_pos()))   # Paddle moves after mouse
 
-        if i > 10:   # for velocity to not be 0, only sample intermittently
-            player_p1.last_pos = Vector2(player_p1.pos)
-            i = 0
-        player_p1.vel = (player_p1.pos - player_p1.last_pos)*2
-
-        tennis_ball.pos += ball_velocity * BALL_FRICTION_FACTOR
 
         # Key bindings
         buttons = pygame.mouse.get_pressed()
@@ -303,16 +242,7 @@ def main():
             show_end_screen()
         pygame.display.update()
 
-        # update state
-        state.ownPoints = p1_score
-        state.opponentPoints = opponent_score
-        state.ballPos = tennis_ball.pos
-        state.ballVelocity = ball_velocity
-        state.ownPos = player_p1.pos
-        state.ownRacketYaw = player_p1.yaw
 
-        # send new state to server
-        server.sendall(pickle.dumps(state))
 
 
     server.close()

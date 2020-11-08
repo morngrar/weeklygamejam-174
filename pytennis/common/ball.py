@@ -9,7 +9,7 @@ class Ball:
     def __init__(self):
         self.radius = 15
         self.ball_color = (220, 253, 80)
-        self.pos = pygame.math.Vector3(0, 0, 0)
+        self.pos = pygame.math.Vector2(0, 0)
 
     def draw(self, window):
         window.blit(image_ball, (int(self.pos.x), int(self.pos.y)))

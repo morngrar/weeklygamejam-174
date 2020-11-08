@@ -5,9 +5,12 @@ import socket
 import pickle
 import selectors
 import logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger()
 
 from common.gamestate import GameState
 from common import networking
+from server import servermechanics
 
 
 def yield_connections(listen_socket):
@@ -27,48 +30,26 @@ def game_handler(player_pair):
     player_one_socket = player_pair[0][0]
     player_two_socket = player_pair[1][0]
 
-    state = GameState()
-
-
     with player_one_socket as p1:
         with player_two_socket as p2:
-            active = p1
-            initial_runs = 2
+            p1.sendall(networking.CONNECTED_MSG)
+            p2.sendall(networking.CONNECTED_MSG)
 
-            while True:
-                if initial_runs:
-                    active.sendall(networking.CONNECTED_MSG)
-                    initial_runs -= 1
+            try:
+                servermechanics.main(p1, p2)
+            except Exception as e:
+                logger.error(e)
+
                     
-                active.sendall(pickle.dumps(state))
 
-                data = active.recv(networking.MAX_PACKET_SIZE)
-                if not data:
-                    break
-                    
-                state = pickle.loads(data)
 
-                # swapping players
-                stateswap(state)
-                if active is p1:
-                    active = p2
-                else:
-                    active = p1
-
-def stateswap(state):
-    try:
-        state.ownPos, state.opponentPos = state.opponentPos, state.ownPos
-        state.ownPoints, state.opponentPoints = state.opponentPoints, state.ownPoints
-        state.ownRacketYaw, state.opponentRacketYaw = state.opponentRacketYaw, state.ownRacketYaw
-    except Exception as e:
-        print(e)
-        raise e
     
 
 
 def main():
 
     from concurrent.futures import ThreadPoolExecutor
+    import threading
 
     # listen_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # conn = listen_socket.accept()
@@ -77,5 +58,8 @@ def main():
 
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as listen_socket:
-        with ThreadPoolExecutor(max_workers=20) as pool:
-            pool.map(game_handler, yield_connections(listen_socket))
+        for pair in yield_connections(listen_socket):
+            game_handler(pair)
+            #threading.Thread(target=game_handler, args=(pair,)).start()
+        # with ThreadPoolExecutor(max_workers=20) as pool:
+        #     pool.map(game_handler, yield_connections(listen_socket))
