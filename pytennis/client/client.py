@@ -68,15 +68,6 @@ def dist(line, x3, y3):
 
 
 
-def show_end_screen():
-    global p1_score
-    global opponent_score
-    global winning_score
-    winner = ""
-    if p1_score == winning_score:
-        winner = "YOU WON"
-    else:
-        winner = "OPPONENT WON"
     
     
 p1 = 1
@@ -91,15 +82,8 @@ def reset_scores():
     p1_score = 0
     opponent_score = 0
 
-def check_if_someone_won():
-    global winning_score
-    global p1_score
-    global opponent_score
 
-    if(p1_score == winning_score):
-        show_end_screen()
-    elif(opponent_score == winning_score):
-        show_end_screen()
+        
 
 def main():
 
@@ -134,7 +118,41 @@ def main():
         tennis_ball.pos.y = SCREEN_HEIGHT*0.25
         ball_velocity = Vector2(0, 0)
 
+    def check_if_someone_won():
+        nonlocal state
+        global winning_score
+        global p1_score
+        global opponent_score
 
+        if p1_score == winning_score or opponent_score == winning_score:
+            state.gameOver = True
+        
+
+           
+
+    def show_end_screen():
+        global p1_score
+        global opponent_score
+        global winning_score
+        nonlocal window
+
+        font = pygame.font.SysFont('comicsans', 30, True, False)
+
+        s = pygame.Surface((SCREEN_WIDTH,SCREEN_HEIGHT))  # the size of your rect
+        s.set_alpha(128)                # alpha level
+        s.fill((255,255,255))           # this fills the entire surface
+        window.blit(s, (0,0))    # (0,0) are the top-left coordinates
+
+        winner = ""
+        if p1_score == winning_score:
+            text = font.render(("You won"), 1, (255, 255, 255))
+        else:
+            text = font.render(("You lost"), 1, (255, 255, 255))
+
+        xpos = SCREEN_WIDTH/2 - text.get_width()/2
+        ypos = SCREEN_HEIGHT/2 - text.get_height()/2
+
+        window.blit(text, (xpos, ypos))
     #
     ## pre-runloop setup
     tennis_ball = ball.Ball()
@@ -303,6 +321,9 @@ def main():
         player_p1.draw(window)
         player_p2.draw(window)
         statusbar.draw(window)
+        
+        if state.gameOver:
+            show_end_screen()
         pygame.display.update()
 
         # update state
