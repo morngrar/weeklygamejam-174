@@ -89,13 +89,19 @@ def check_if_someone_won():
 
 def main():
 
+    print("\n\nWaiting for an opponent...")
 
-    # Adds point to the respective player
+    #
+    ## internal functions
+
     def add_point(p):
+        """Adds point to the respective player"""
+
         global p1_score
         global opponent_score
         if p == 1:
             p1_score += 1
+<<<<<<< HEAD
             p1_serve()
         else:
             opponent_score += 1
@@ -106,22 +112,34 @@ def main():
     window = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("Tennis game")
     clock = pygame.time.Clock()
+=======
+            logger.info("You scored! You have ", p1_score, " points")
+            p2_serve()
+        else:
+            opponent_score += 1
+            logger.info("Opponent scored! Opponent has ", opponent_score, " points")
+            p1_serve()
+>>>>>>> main
 
     def p1_serve():
+        nonlocal ball_velocity
         tennis_ball.pos.x = SCREEN_WIDTH / 2
         tennis_ball.pos.y = SCREEN_HEIGHT*0.75
         ball_velocity = Vector2(0, 0)
 
     def p2_serve():
+        nonlocal ball_velocity
         tennis_ball.pos.x = SCREEN_WIDTH / 2
         tennis_ball.pos.y = SCREEN_HEIGHT*0.25
         ball_velocity = Vector2(0, 0)
 
+
+    #
+    ## pre-runloop setup
     tennis_ball = ball.Ball()
     player_p1 = player.Player(PLAYER_WIDTH, PLAYER_HEIGHT)
     player_p2 = player.Player(PLAYER_WIDTH, PLAYER_HEIGHT)
     player_p2.yaw_angle *= -1
-    statusbar = Statusbar(SCREEN_WIDTH, 30)
 
     ball_velocity = Vector2()
 
@@ -135,6 +153,11 @@ def main():
     pygame.mouse.set_visible(False)
 
     p1_serve()
+
+
+
+    #
+    ## Handshake and start game loop
 
     run = True
     i = 0
@@ -150,6 +173,10 @@ def main():
         logger.info("Connected with opponent")
         server.settimeout(5)
 
+    window = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    pygame.display.set_caption("Tennis game")
+    clock = pygame.time.Clock()
+    statusbar = Statusbar(SCREEN_WIDTH, 30)
     
     while run:
         clock.tick(100)     # refresh rate
@@ -188,11 +215,14 @@ def main():
 
 
         ###########################################################
-        # Ball wall collision -- remove when ready for multiplayer
+        # Ball wall collision
         ###########################################################
-        if (    # If the ball is played out on either side 
-            tennis_ball.pos.x + tennis_ball.radius >= SCREEN_WIDTH 
-            or tennis_ball.pos.x <= 0 + tennis_ball.radius
+
+        if (
+            tennis_ball.pos.x + tennis_ball.radius < 0
+            or tennis_ball.pos.x - tennis_ball.radius > SCREEN_WIDTH
+            or tennis_ball.pos.y + tennis_ball.radius > SCREEN_HEIGHT
+            or tennis_ball.pos.y - tennis_ball.radius < 0
         ):
 
             if ball_velocity.y != 0:
@@ -204,11 +234,8 @@ def main():
                 else: 
                     add_point(opponent) # Add point to opponent
         
-        check_if_someone_won()
+            check_if_someone_won()
 
-        if tennis_ball.pos.y >= SCREEN_HEIGHT:
-            tennis_ball.pos.y = SCREEN_HEIGHT*0.75
-            ball_velocity = Vector2(0, 0)
         ##########################################################s
 
 
@@ -244,13 +271,6 @@ def main():
         player_p1.vel = (player_p1.pos - player_p1.last_pos)*2
 
         tennis_ball.pos += ball_velocity * BALL_FRICTION_FACTOR
-
-
-        # # Player can't move to other side of court or "out of window"
-        # if player_p1.pos.x >= SCREEN_WIDTH - (player_p1.width):
-        #     player_p1.pos.x = SCREEN_WIDTH - player_p1.width
-        # elif player_p1.pos.x <= 0:
-        #     player_p1.pos.x = 0
 
 
         # Player can't move to other side of court
