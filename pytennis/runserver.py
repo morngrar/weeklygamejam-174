@@ -1,5 +1,5 @@
+#!/usr/bin/env python3.8
+
 from server import server
 
-
-if __name__=="__main__":
-    server.main()
+server.main()

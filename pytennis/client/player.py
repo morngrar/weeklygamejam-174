@@ -1,13 +1,18 @@
 from client import *
 import pygame
+import os
+from pygame.math import Vector2
 
 from math import sin, cos, radians
 
+image_ball_original = pygame.image.load(os.path.join('resources', 'pytennis_racket.png'))
+
+
 class Player:
     def __init__(self, width, height):
-        self.pos = pygame.math.Vector3(640,760,0)
-        self.vel = pygame.math.Vector3(0,0,0)
-        self.last_pos = pygame.math.Vector3(self.pos)
+        self.pos = Vector2(640,760)
+        self.vel = Vector2(0,0)
+        self.last_pos = Vector2(self.pos)
         self.width = width
         self.height = height
         self.player_color = (210, 105, 30)
@@ -15,9 +20,11 @@ class Player:
         self.yaw_angle = 25     # How many degrees to rotate in the horizontal plane, as seen top down
         self.image = pygame.Surface((80, 10))
         self.image.set_colorkey((0, 0, 0))  # make background of player invisible when rotating
-        self.image.fill(self.player_color)
+        
         self.rect = self.image.get_rect()
-        self.rect.center = (self.width // 2 , self.height // 2)
+        self.rect.center = (self.width // 2, self.height // 2)
+        self.image_ball = pygame.transform.scale(image_ball_original, (width, height))
+        self.image = self.image_ball
 
     def get_center_line(self):
         x1 = self.pos.x
