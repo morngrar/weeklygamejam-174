@@ -3,8 +3,12 @@
 import pygame
 import os
 import sys
+from tkinter import *
+from tkinter import messagebox
+
 from client import ball
 from client import player
+
 
 os.environ['SDL_VIDEO_CENTERED'] = '1'  # center window on screen
 
@@ -44,19 +48,78 @@ def dist(line, x3, y3):
     return dist
 
 
+def show_end_screen():
+    global p1_score
+    global opponent_score
+    global winning_score
+    winner = ""
+    if p1_score == winning_score:
+        winner = "YOU WON"
+    else:
+        winner = "OPPONENT WON"
+
+    Tk().wm_withdraw() #to hide the main window
+    res = messagebox.askquestion(winner,  
+                         'New Game?') 
+    if res == 'yes' : 
+        reset_scores()          
+    else: 
+        pygame.quit
+        sys.exit()
+    
+    
+   
+def reset_scores():
+    global p1_score
+    global opponent_score
+    p1_score = 0
+    opponent_score = 0
+
+def check_if_someone_won():
+    global winning_score
+    global p1_score
+    global opponent_score
+
+    if(p1_score == winning_score):
+        show_end_screen()
+    elif(opponent_score == winning_score):
+        show_end_screen()
 
 def main():
     pass
 
 def p1_serve():
+    global ball_velocity
     tennis_ball.pos.x = SCREEN_WIDTH / 2
     tennis_ball.pos.y = SCREEN_HEIGHT*0.75
     ball_velocity = pygame.math.Vector3(0, 0, 0)
 
 def p2_serve():
+    global ball_velocity
     tennis_ball.pos.x = SCREEN_WIDTH / 2
     tennis_ball.pos.y = SCREEN_HEIGHT*0.25
     ball_velocity = pygame.math.Vector3(0, 0, 0)
+
+p1 = 1
+opponent = 2
+p1_score = 0
+opponent_score = 0
+winning_score = 3
+
+
+# Adds point to the respective player
+def add_point(p):
+    global p1_score
+    global opponent_score
+    if p == 1:
+        p1_score += 1
+        print("You scored! You have ", p1_score, " points")
+        p1_serve()
+    else:
+        opponent_score += 1
+        print("Opponent scored! Opponent has ", opponent_score, " points")
+        p2_serve()
+
 
 tennis_ball = ball.Ball()
 player_p1 = player.Player(PLAYER_WIDTH, PLAYER_HEIGHT)
@@ -75,6 +138,8 @@ YAW_ANGLING = pygame.math.Vector3(-1, 0, 0)   # positive when /
 YAW_ACCEL = 30
 
 pygame.mouse.set_visible(False)
+
+
 
 p1_serve()
 
@@ -96,20 +161,28 @@ while run:
     ###########################################################
     # Ball wall collision -- remove when ready for multiplayer
     ###########################################################
-    if (
+    if (    # If the ball is played out on either side 
         tennis_ball.pos.x + tennis_ball.radius >= SCREEN_WIDTH 
         or tennis_ball.pos.x <= 0 + tennis_ball.radius
     ):
-        tennis_ball.pos.x = SCREEN_WIDTH / 2
-        tennis_ball.pos.y = SCREEN_HEIGHT*0.75
-        ball_velocity = pygame.math.Vector3(0, 0, 0)
+        # Check whose player's side of the court the ball has been played out on
+        # If the ball was played out on the opponents side, add point to me
+        if tennis_ball.pos.y <= (SCREEN_HEIGHT/2): 
+            add_point(p1)   # Add point to "me"
+            
+        else: 
+            add_point(opponent) # Add point to opponent
+    
+    check_if_someone_won()
 
     if tennis_ball.pos.y <= 0 + tennis_ball.radius:
         ball_velocity = -(ball_velocity)
+        #add_point(p1)
 
     if tennis_ball.pos.y >= SCREEN_HEIGHT:
         tennis_ball.pos.y = SCREEN_HEIGHT*0.75
         ball_velocity = pygame.math.Vector3(0, 0, 0)
+        #add_point(opponent)
     ##########################################################s
 
 
