@@ -1,6 +1,7 @@
 # Made with python 3.8
 
 import pygame
+from pygame.math import Vector2
 import os
 import sys
 import pickle
@@ -22,12 +23,13 @@ PLAYER_WIDTH = 80
 PLAYER_HEIGHT = 10
 
 
-def flip_coords(x, y):
+def flip_coords(v):
     """Flips the coordinates, so that they're seen from the other side of table"""
 
-    x = SCREEN_WIDTH - x
-    y = SCREEN_HEIGHT - y
-    return (x, y)
+    vector = Vector2(v)
+    vector.x = SCREEN_WIDTH - vector.x
+    vector.y = SCREEN_HEIGHT - vector.y
+    return vector
 
 
 def dist(line, x3, y3):
@@ -64,27 +66,28 @@ def main():
     def p1_serve():
         tennis_ball.pos.x = SCREEN_WIDTH / 2
         tennis_ball.pos.y = SCREEN_HEIGHT*0.75
-        ball_velocity = pygame.math.Vector3(0, 0, 0)
+        ball_velocity = Vector2(0, 0)
 
     def p2_serve():
         tennis_ball.pos.x = SCREEN_WIDTH / 2
         tennis_ball.pos.y = SCREEN_HEIGHT*0.25
-        ball_velocity = pygame.math.Vector3(0, 0, 0)
+        ball_velocity = Vector2(0, 0)
 
     tennis_ball = ball.Ball()
     player_p1 = player.Player(PLAYER_WIDTH, PLAYER_HEIGHT)
+    player_p2 = player.Player(PLAYER_WIDTH, PLAYER_HEIGHT)
 
     court_color = (0, 133, 102)
     court_stripes = (255, 255, 255)
 
     # Ball speed, remove later
-    ball_velocity = pygame.math.Vector3()
+    ball_velocity = Vector2()
 
     BALL_FRICTION_FACTOR = 0.2
     BALL_MAX_SPEED = 40
 
-    YAW_VELOCITY = pygame.math.Vector3(0, -1, 0)
-    YAW_ANGLING = pygame.math.Vector3(-1, 0, 0)   # positive when /
+    YAW_VELOCITY = Vector2(0, -1)
+    YAW_ANGLING = Vector2(-1, 0)   # positive when /
     YAW_ACCEL = 30
 
     pygame.mouse.set_visible(False)
@@ -99,8 +102,10 @@ def main():
 
     handshake = server.recv(networking.MAX_PACKET_SIZE)
     if not handshake or handshake != networking.CONNECTED_MSG:
+        print("Failed to acquire handshake: ", handshake)
         run = False
     else:
+        print("Connected with opponent")
         server.settimeout(5)
 
     
@@ -120,15 +125,12 @@ def main():
         state = pickle.loads(data)
 
         # Update values from game state
-        tennis_ball.x, tennis_ball.y, tennis_ball.z = state.ballPos
-        ball_speed_x, ball_speed_y, ball_speed_z = state.ballVelocity
-        ball_speed_x, ball_speed_y = flip_coords(
-            ball_speed_x, ball_speed_y
-        )
-        player_p2.x, player_p2.y, player_p2.z = state.opponentPos
-        player_p2.x, player_p2.y = flip_coords(
-            player_p2.x, player_p2.y
-        )
+        tennis_ball.pos = state.ballPos
+        tennis_ball.pos = flip_coords(tennis_ball.pos)
+        ball_velocity = state.ballVelocity
+
+        player_p2.pos = state.opponentPos
+        player_p2.pos = flip_coords(player_p2.pos)
         player_p2.yaw = state.opponentRacketYaw
 
         # Handle movement/collision and stuff
@@ -142,14 +144,14 @@ def main():
         ):
             tennis_ball.pos.x = SCREEN_WIDTH / 2
             tennis_ball.pos.y = SCREEN_HEIGHT*0.75
-            ball_velocity = pygame.math.Vector3(0, 0, 0)
+            ball_velocity = Vector2(0, 0)
 
         if tennis_ball.pos.y <= 0 + tennis_ball.radius:
             ball_velocity = -(ball_velocity)
 
         if tennis_ball.pos.y >= SCREEN_HEIGHT:
             tennis_ball.pos.y = SCREEN_HEIGHT*0.75
-            ball_velocity = pygame.math.Vector3(0, 0, 0)
+            ball_velocity = Vector2(0, 0)
         ##########################################################s
 
 
@@ -164,7 +166,7 @@ def main():
         # If the ball is on player's side            # and distance is small enough to ball
         if tennis_ball.pos.y >= SCREEN_HEIGHT/2 and distance_to_ball <= tennis_ball.radius:
             if ball_velocity.y >= 0:
-                ball_velocity = pygame.math.Vector3(player_p1.vel) - ball_velocity 
+                ball_velocity = Vector2(player_p1.vel) - ball_velocity 
 
                 # adds a vector force for paddle yaw
                 ball_velocity += (YAW_VELOCITY + YAW_ANGLING * player_p1.yaw) * YAW_ACCEL 
@@ -214,19 +216,20 @@ def main():
         else:
             player_p1.yaw = 0  # flat racket
 
-        # Update screen
+        
         # Visuals
         window.fill(court_color)
         pygame.draw.aaline(window, court_stripes,
                         (0, SCREEN_HEIGHT/2), (SCREEN_WIDTH, SCREEN_HEIGHT/2))
         tennis_ball.draw(window)
         player_p1.draw(window)
+        player_p2.draw(window)
         pygame.display.update()
 
         # update state
-        state.ballPos = [tennis_ball.x, tennis_ball.y, tennis_ball.z]
-        state.ballVelocity = [ball_speed_x, ball_speed_y, ball_speed_z]
-        state.ownPos = [player_p1.x, player_p1.y, player_p1.z]
+        state.ballPos = tennis_ball.pos
+        state.ballVelocity = ball_velocity
+        state.ownPos = player_p1.pos
         state.ownRacketYaw = player_p1.yaw
 
         # send new state to server

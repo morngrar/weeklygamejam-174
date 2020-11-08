@@ -28,13 +28,13 @@ def game_handler(player_pair):
     player_two_socket = player_pair[1][0]
 
     state = GameState()
-    state.gameStarted = True
 
 
     with player_one_socket as p1:
         with player_two_socket as p2:
             active = p1
             initial_runs = 2
+
             while True:
                 if initial_runs:
                     active.sendall(networking.CONNECTED_MSG)
@@ -47,6 +47,8 @@ def game_handler(player_pair):
                     break
                     
                 state = pickle.loads(data)
+
+                # swapping players
                 stateswap(state)
                 if active is p1:
                     active = p2
@@ -54,10 +56,13 @@ def game_handler(player_pair):
                     active = p1
 
 def stateswap(state):
-    state.ownPos, state.opponentPos = state.opponentPos, state.ownPos
-    state.ownPoints, state.opponentPoints = state.opponentPoints, state.ownPoints
-    state.ownRacketYaw, state.opponentRacketYaw = state.opponentRacketYaw, state.ownRacketYaw
-    state.ownRacketVelocity, state.opponentRacketVelocity = state.opponentRacketVelocity, state.ownRacketVelocity
+    try:
+        state.ownPos, state.opponentPos = state.opponentPos, state.ownPos
+        state.ownPoints, state.opponentPoints = state.opponentPoints, state.ownPoints
+        state.ownRacketYaw, state.opponentRacketYaw = state.opponentRacketYaw, state.ownRacketYaw
+    except Exception as e:
+        print(e)
+        raise e
     
 
 

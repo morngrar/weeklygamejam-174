@@ -1,13 +1,14 @@
 from client import *
 import pygame
+from pygame.math import Vector2
 
 from math import sin, cos, radians
 
 class Player:
     def __init__(self, width, height):
-        self.pos = pygame.math.Vector3(640,760,0)
-        self.vel = pygame.math.Vector3(0,0,0)
-        self.last_pos = pygame.math.Vector3(self.pos)
+        self.pos = Vector2(640,760)
+        self.vel = Vector2(0,0)
+        self.last_pos = Vector2(self.pos)
         self.width = width
         self.height = height
         self.player_color = (210, 105, 30)
