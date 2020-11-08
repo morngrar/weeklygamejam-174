@@ -59,8 +59,14 @@ def main():
 
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.connect((networking.HOST, networking.PORT))
-    server.sendall(pickle.dumps(state))
-    server.settimeout(5)
+
+    handshake = server.recv(networking.MAX_PACKET_SIZE)
+    if not handshake or handshake != networking.CONNECTED_MSG:
+        run = False
+    else:
+        server.settimeout(5)
+
+
 
     while run:
         data = server.recv(networking.MAX_PACKET_SIZE)

@@ -30,10 +30,16 @@ def game_handler(player_pair):
     state = GameState()
     state.gameStarted = True
 
+
     with player_one_socket as p1:
         with player_two_socket as p2:
             active = p1
+            initial_runs = 2
             while True:
+                if initial_runs:
+                    active.sendall(networking.CONNECTED_MSG)
+                    initial_runs -= 1
+                    
                 active.sendall(pickle.dumps(state))
 
                 data = active.recv(networking.MAX_PACKET_SIZE)
