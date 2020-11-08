@@ -21,8 +21,10 @@ class GameState:
         self.ownPoints = 0
         self.gameStarted = False
         self.gameOver = False
-        self.ownRacketTilt = 1.0
+        self.ownRacketYaw = 1
         self.ownRacketVelocity = [0,0]
+        self.opponentRacketYaw = 1
+        self.opponentRacketVelocity = [0,0]
 
 
     def __str__(self):
@@ -31,9 +33,15 @@ class GameState:
         s += f"\tOwn position: {self.ownPos}\n"
         s += f"\tBall position: {self.ballPos}\n"
         s += f"\tBall velocity: {self.ballVelocity}\n"
-        s += f"\tOpponents points: {self.opponentsPoints}\n"
+        s += f"\tOpponents points: {self.opponentPoints}\n"
+        s += f"\tOwn points: {self.ownPoints}\n"
         s += f"\tGame started: {self.gameStarted}\n"
         s += f"\tGame over: {self.gameOver}\n"
-        s += f"\tOwn racket tilt: {self.ownRacketTilt}\n"
+        s += f"\tOwn racket tilt: {self.ownRacketYaw}\n"
         s += f"\tOwn racket velocity: {self.ownRacketVelocity}\n"
+        s += f"\tOpponent racket tilt: {self.opponentRacketYaw}\n"
+        s += f"\tOpponent racket velocity: {self.opponentRacketVelocity}\n"
+        return s
+        
 
+        
