@@ -8,21 +8,13 @@ import pickle
 import socket
 
 from common.gamestate import GameState
-from common import networking
-from client import ball
-from client import player
+from common import networking, screen, player, ball
+
 from client.statusbar import Statusbar
 
 pygame.init()
 os.environ['SDL_VIDEO_CENTERED'] = '1'  # center window on screen
 
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 1000
-
-BALL_WIDTH = 20
-BALL_HEIGHT = 20
-PLAYER_WIDTH = 80
-PLAYER_HEIGHT = 10
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -35,12 +27,12 @@ def flip_coords(v):
     """Flips the coordinates, so that they're seen from the other side of table"""
 
     vector = Vector2(v)
-    vector.x = SCREEN_WIDTH - vector.x
-    vector.y = SCREEN_HEIGHT - vector.y
+    vector.x = screen.WIDTH - vector.x
+    vector.y = screen.HEIGHT - vector.y
     return vector
 
 image_background_original = pygame.image.load(os.path.join('resources', 'pytennis_court.png'))
-image_background = pygame.transform.scale(image_background_original, (SCREEN_WIDTH, SCREEN_HEIGHT-30))
+image_background = pygame.transform.scale(image_background_original, (screen.WIDTH, screen.HEIGHT-30))
 
 
 def dist(line, x3, y3):
@@ -102,14 +94,14 @@ def main():
 
     def p1_serve():
         nonlocal ball_velocity
-        tennis_ball.pos.x = SCREEN_WIDTH / 2
-        tennis_ball.pos.y = SCREEN_HEIGHT*0.75
+        tennis_ball.pos.x = screen.WIDTH / 2
+        tennis_ball.pos.y = screen.HEIGHT*0.75
         ball_velocity = Vector2(0, 0)
 
     def p2_serve():
         nonlocal ball_velocity
-        tennis_ball.pos.x = SCREEN_WIDTH / 2
-        tennis_ball.pos.y = SCREEN_HEIGHT*0.25
+        tennis_ball.pos.x = screen.WIDTH / 2
+        tennis_ball.pos.y = screen.HEIGHT*0.25
         ball_velocity = Vector2(0, 0)
 
     def check_if_someone_won():
@@ -132,7 +124,7 @@ def main():
 
         font = pygame.font.SysFont('comicsans', 30, True, False)
 
-        s = pygame.Surface((SCREEN_WIDTH,SCREEN_HEIGHT))  # the size of your rect
+        s = pygame.Surface((screen.WIDTH,screen.HEIGHT))  # the size of your rect
         s.set_alpha(128)                # alpha level
         s.fill((0,0,0))           # this fills the entire surface
         window.blit(s, (0,0))    # (0,0) are the top-left coordinates
@@ -143,15 +135,15 @@ def main():
         else:
             text = font.render(("You lost"), 1, (255, 255, 255))
 
-        xpos = SCREEN_WIDTH/2 - text.get_width()/2
-        ypos = SCREEN_HEIGHT/2 - text.get_height()/2
+        xpos = screen.WIDTH/2 - text.get_width()/2
+        ypos = screen.HEIGHT/2 - text.get_height()/2
 
         window.blit(text, (xpos, ypos))
     #
     ## pre-runloop setup
     tennis_ball = ball.Ball()
-    player_p1 = player.Player(PLAYER_WIDTH, PLAYER_HEIGHT)
-    player_p2 = player.Player(PLAYER_WIDTH, PLAYER_HEIGHT)
+    player_p1 = player.Player()
+    player_p2 = player.Player()
     player_p2.yaw_angle *= -1
 
     ball_velocity = Vector2()
@@ -186,10 +178,10 @@ def main():
         logger.info("Connected with opponent")
         server.settimeout(5)
 
-    window = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    window = pygame.display.set_mode((screen.WIDTH, screen.HEIGHT))
     pygame.display.set_caption("Tennis game")
     clock = pygame.time.Clock()
-    statusbar = Statusbar(SCREEN_WIDTH, 30)
+    statusbar = Statusbar(screen.WIDTH, 30)
     
     while run:
         clock.tick(200)     # refresh rate
@@ -237,15 +229,15 @@ def main():
 
         if (
             tennis_ball.pos.x + tennis_ball.radius < 0
-            or tennis_ball.pos.x - tennis_ball.radius > SCREEN_WIDTH
-            or tennis_ball.pos.y + tennis_ball.radius > SCREEN_HEIGHT
+            or tennis_ball.pos.x - tennis_ball.radius > screen.WIDTH
+            or tennis_ball.pos.y + tennis_ball.radius > screen.HEIGHT
             or tennis_ball.pos.y - tennis_ball.radius < 0
         ):
 
             if ball_velocity.y != 0 and not state.gameOver:
                 # Check whose player's side of the court the ball has been played out on
                 # If the ball was played out on the opponents side, add point to me
-                if tennis_ball.pos.y <= (SCREEN_HEIGHT/2): 
+                if tennis_ball.pos.y <= (screen.HEIGHT/2): 
                     add_point(p1)   # Add point to "me"
                     
                 else: 
@@ -261,7 +253,7 @@ def main():
         distance_to_ball = dist(line, tennis_ball.pos.x, tennis_ball.pos.y)
 
         # If the ball is on player's side            # and distance is small enough to ball
-        if tennis_ball.pos.y >= SCREEN_HEIGHT/2 and distance_to_ball <= tennis_ball.radius:
+        if tennis_ball.pos.y >= screen.HEIGHT/2 and distance_to_ball <= tennis_ball.radius:
             if ball_velocity.y >= 0:
                 ball_velocity = Vector2(player_p1.vel) - ball_velocity 
 
