@@ -89,6 +89,7 @@ def main():
     def add_point(p):
         """Adds point to the respective player"""
 
+        nonlocal statusbar
         global p1_score
         global opponent_score
         if p == 1:
@@ -97,6 +98,7 @@ def main():
         else:
             opponent_score += 1
             p1_serve()
+
 
     def p1_serve():
         nonlocal ball_velocity
@@ -190,7 +192,7 @@ def main():
     statusbar = Statusbar(SCREEN_WIDTH, 30)
     
     while run:
-        clock.tick(100)     # refresh rate
+        clock.tick(60)     # refresh rate
         i += 1              # counter for paddle velocity
 
 
@@ -213,6 +215,10 @@ def main():
         global opponent_score
         p1_score = state.ownPoints
         opponent_score = state.opponentPoints
+
+        # Update status bar
+        statusbar.playerscore = p1_score
+        statusbar.opponentscore = opponent_score
 
         player_p2.pos = state.opponentPos
         player_p2.pos = flip_coords(player_p2.pos)
@@ -250,18 +256,13 @@ def main():
         ##########################################################s
 
 
-        # find and draw collision line on player 1
-        line = player_p1.get_center_line()
-        start = (line[0], line[1])
-        end = (line[2], line[3])
-        pygame.draw.line(window, (200, 200, 0), start, end)
 
+        line = player_p1.get_center_line()
         distance_to_ball = dist(line, tennis_ball.pos.x, tennis_ball.pos.y)
 
         # If the ball is on player's side            # and distance is small enough to ball
         if tennis_ball.pos.y >= SCREEN_HEIGHT/2 and distance_to_ball <= tennis_ball.radius:
             if ball_velocity.y >= 0:
-                logger.debug("Collision")
                 ball_velocity = Vector2(player_p1.vel) - ball_velocity 
 
                 # adds a vector force for paddle yaw
@@ -271,8 +272,8 @@ def main():
                 ball_velocity *= 0.6
 
                 # if speed isn't limited, paddle can clip through ball
-                while ball_velocity.magnitude() > BALL_MAX_SPEED:       
-                    ball_velocity *= 0.9
+                if ball_velocity.magnitude() > BALL_MAX_SPEED:       
+                    ball_velocity *= 0.5
 
         player_p1.move(*(pygame.mouse.get_pos()))   # Paddle moves after mouse
 
@@ -282,14 +283,6 @@ def main():
         player_p1.vel = (player_p1.pos - player_p1.last_pos)*2
 
         tennis_ball.pos += ball_velocity * BALL_FRICTION_FACTOR
-
-
-        # Player can't move to other side of court
-        # TODO reenable at end
-        ### DISABLED FOR TESTING
-        # if pygame.mouse.get_pos()[1] + player_p1.height <= SCREEN_HEIGHT/2:
-        #     pygame.mouse.set_pos(
-        #         [pygame.mouse.get_pos()[0], SCREEN_HEIGHT/2 + player_p1.height])
 
         # Key bindings
         buttons = pygame.mouse.get_pressed()
@@ -306,9 +299,6 @@ def main():
         else:
             player_p1.yaw = 0  # flat racket
 
-        # Update status bar
-        statusbar.playerscore = p1_score
-        statusbar.opponentscore = opponent_score
 
         # Visuals
         window.blit(image_background, (0, statusbar.height))
