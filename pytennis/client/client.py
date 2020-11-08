@@ -112,9 +112,14 @@ def check_if_someone_won():
 
 def main():
 
+    print("\n\nWaiting for an opponent...")
 
-    # Adds point to the respective player
+    #
+    ## internal functions
+
     def add_point(p):
+        """Adds point to the respective player"""
+
         global p1_score
         global opponent_score
         if p == 1:
@@ -126,13 +131,6 @@ def main():
             print("Opponent scored! Opponent has ", opponent_score, " points")
             p2_serve()
 
-
-    #
-    # pre-runloop setup
-    window = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    pygame.display.set_caption("Tennis game")
-    clock = pygame.time.Clock()
-
     def p1_serve():
         tennis_ball.pos.x = SCREEN_WIDTH / 2
         tennis_ball.pos.y = SCREEN_HEIGHT*0.75
@@ -143,11 +141,13 @@ def main():
         tennis_ball.pos.y = SCREEN_HEIGHT*0.25
         ball_velocity = Vector2(0, 0)
 
+
+    #
+    ## pre-runloop setup
     tennis_ball = ball.Ball()
     player_p1 = player.Player(PLAYER_WIDTH, PLAYER_HEIGHT)
     player_p2 = player.Player(PLAYER_WIDTH, PLAYER_HEIGHT)
     player_p2.yaw_angle *= -1
-    statusbar = Statusbar(SCREEN_WIDTH, 30)
 
     court_color = (0, 133, 102)
     court_stripes = (255, 255, 255)
@@ -179,6 +179,10 @@ def main():
         logger.info("Connected with opponent")
         server.settimeout(5)
 
+    window = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    pygame.display.set_caption("Tennis game")
+    clock = pygame.time.Clock()
+    statusbar = Statusbar(SCREEN_WIDTH, 30)
     
     while run:
         clock.tick(100)     # refresh rate
