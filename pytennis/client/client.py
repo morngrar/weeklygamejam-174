@@ -210,6 +210,7 @@ def main():
 
 
         # Player can't move to other side of court
+        # TODO reenable at end
         ### DISABLED FOR TESTING
         # if pygame.mouse.get_pos()[1] + player_p1.height <= SCREEN_HEIGHT/2:
         #     pygame.mouse.set_pos(
