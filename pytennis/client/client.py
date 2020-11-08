@@ -22,6 +22,12 @@ BALL_HEIGHT = 20
 PLAYER_WIDTH = 80
 PLAYER_HEIGHT = 10
 
+import logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger()
+
+
+
 
 def flip_coords(v):
     """Flips the coordinates, so that they're seen from the other side of table"""
@@ -81,7 +87,6 @@ def main():
     court_color = (0, 133, 102)
     court_stripes = (255, 255, 255)
 
-    # Ball speed, remove later
     ball_velocity = Vector2()
 
     BALL_FRICTION_FACTOR = 0.2
@@ -103,10 +108,10 @@ def main():
 
     handshake = server.recv(networking.MAX_PACKET_SIZE)
     if not handshake or handshake != networking.CONNECTED_MSG:
-        print("Failed to acquire handshake: ", handshake)
+        logger.info("Failed to acquire handshake: %s", handshake)
         run = False
     else:
-        print("Connected with opponent")
+        logger.info("Connected with opponent")
         server.settimeout(5)
 
     
@@ -129,6 +134,7 @@ def main():
         tennis_ball.pos = state.ballPos
         tennis_ball.pos = flip_coords(tennis_ball.pos)
         ball_velocity = state.ballVelocity
+        ball_velocity = -(ball_velocity)
 
         player_p2.pos = state.opponentPos
         player_p2.pos = flip_coords(player_p2.pos)
@@ -170,7 +176,7 @@ def main():
         # If the ball is on player's side            # and distance is small enough to ball
         if tennis_ball.pos.y >= SCREEN_HEIGHT/2 and distance_to_ball <= tennis_ball.radius:
             if ball_velocity.y >= 0:
-                print("collision")
+                logger.debug("Collision")
                 ball_velocity = Vector2(player_p1.vel) - ball_velocity 
 
                 # adds a vector force for paddle yaw
@@ -179,19 +185,21 @@ def main():
                 # decelerate (slows down ball if paddle is still)
                 ball_velocity *= 0.6
 
-            # if speed isn't limited, paddle can clip through ball
-            while ball_velocity.magnitude() > BALL_MAX_SPEED:       
-                ball_velocity *= 0.9
+                # if speed isn't limited, paddle can clip through ball
+                while ball_velocity.magnitude() > BALL_MAX_SPEED:       
+                    ball_velocity *= 0.9
 
         player_p1.move(*(pygame.mouse.get_pos()))   # Paddle moves after mouse
 
         if i > 5:   # for velocity to not be 0, only sample intermittently
-            player_p1.last_pos.x, player_p1.last_pos.y = player_p1.pos.x, player_p1.pos.y
+            player_p1.last_pos = Vector2(player_p1.pos)
             i = 0
         player_p1.vel = (player_p1.pos - player_p1.last_pos)*2
 
         tennis_ball.pos += ball_velocity * BALL_FRICTION_FACTOR
 
+        logger.debug("Ball velocity: %s", ball_velocity)
+        logger.debug("Player velocity: %s", player_p1.vel)
 
 
         # # Player can't move to other side of court or "out of window"
