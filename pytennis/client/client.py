@@ -4,9 +4,6 @@ import pygame
 from pygame.math import Vector2
 import os
 import sys
-from tkinter import *
-from tkinter import messagebox
-
 import pickle
 import socket
 
@@ -66,26 +63,6 @@ def dist(line, x3, y3):
     dist = (dx*dx + dy*dy)**.5
 
     return dist
-
-
-def show_end_screen():
-    global p1_score
-    global opponent_score
-    global winning_score
-    winner = ""
-    if p1_score == winning_score:
-        winner = "YOU WON"
-    else:
-        winner = "OPPONENT WON"
-
-    Tk().wm_withdraw() #to hide the main window
-    res = messagebox.askquestion(winner,  
-                         'New Game?') 
-    if res == 'yes' : 
-        reset_scores()          
-    else: 
-        pygame.quit
-        sys.exit()
     
     
 p1 = 1
@@ -106,9 +83,9 @@ def check_if_someone_won():
     global opponent_score
 
     if(p1_score == winning_score):
-        show_end_screen()
+        print("you won")
     elif(opponent_score == winning_score):
-        show_end_screen()
+        print("opponent won")
 
 def main():
 
@@ -127,7 +104,6 @@ def main():
             p2_serve()
 
 
-    #
     # pre-runloop setup
     window = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("Tennis game")
@@ -148,9 +124,6 @@ def main():
     player_p2 = player.Player(PLAYER_WIDTH, PLAYER_HEIGHT)
     player_p2.yaw_angle *= -1
     statusbar = Statusbar(SCREEN_WIDTH, 30)
-
-    court_color = (0, 133, 102)
-    court_stripes = (255, 255, 255)
 
     ball_velocity = Vector2()
 
@@ -200,6 +173,10 @@ def main():
         tennis_ball.pos = flip_coords(tennis_ball.pos)
         ball_velocity = state.ballVelocity
         ball_velocity = -(ball_velocity)
+        global p1_score
+        global opponent_score
+        p1_score = state.ownPoints
+        opponent_score = state.opponentPoints
 
         player_p2.pos = state.opponentPos
         player_p2.pos = flip_coords(player_p2.pos)
@@ -268,9 +245,6 @@ def main():
 
         tennis_ball.pos += ball_velocity * BALL_FRICTION_FACTOR
 
-        logger.debug("Ball velocity: %s", ball_velocity)
-        logger.debug("Player velocity: %s", player_p1.vel)
-
 
         # # Player can't move to other side of court or "out of window"
         # if player_p1.pos.x >= SCREEN_WIDTH - (player_p1.width):
@@ -301,7 +275,10 @@ def main():
         else:
             player_p1.yaw = 0  # flat racket
 
-        
+        # Update status bar
+        statusbar.playerscore = p1_score
+        statusbar.opponentscore = opponent_score
+
         # Visuals
         window.blit(image_background, (0, statusbar.height))
         tennis_ball.draw(window)
@@ -311,6 +288,8 @@ def main():
         pygame.display.update()
 
         # update state
+        state.ownPoints = p1_score
+        state.opponentPoints = opponent_score
         state.ballPos = tennis_ball.pos
         state.ballVelocity = ball_velocity
         state.ownPos = player_p1.pos
