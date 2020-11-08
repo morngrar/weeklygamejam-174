@@ -27,7 +27,7 @@ PLAYER_WIDTH = 80
 PLAYER_HEIGHT = 10
 
 import logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
 
 
@@ -74,7 +74,7 @@ p1 = 1
 opponent = 2
 p1_score = 0
 opponent_score = 0
-winning_score = 3
+winning_score = 15
    
 def reset_scores():
     global p1_score
