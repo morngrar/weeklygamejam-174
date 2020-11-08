@@ -96,11 +96,9 @@ def main():
         global opponent_score
         if p == 1:
             p1_score += 1
-            print("You scored! You have ", p1_score, " points")
             p1_serve()
         else:
             opponent_score += 1
-            print("Opponent scored! Opponent has ", opponent_score, " points")
             p2_serve()
 
 
@@ -196,13 +194,15 @@ def main():
             tennis_ball.pos.x + tennis_ball.radius >= SCREEN_WIDTH 
             or tennis_ball.pos.x <= 0 + tennis_ball.radius
         ):
-            # Check whose player's side of the court the ball has been played out on
-            # If the ball was played out on the opponents side, add point to me
-            if tennis_ball.pos.y <= (SCREEN_HEIGHT/2): 
-                add_point(p1)   # Add point to "me"
-                
-            else: 
-                add_point(opponent) # Add point to opponent
+
+            if ball_velocity.y != 0:
+                # Check whose player's side of the court the ball has been played out on
+                # If the ball was played out on the opponents side, add point to me
+                if tennis_ball.pos.y <= (SCREEN_HEIGHT/2): 
+                    add_point(p1)   # Add point to "me"
+                    
+                else: 
+                    add_point(opponent) # Add point to opponent
         
         check_if_someone_won()
 

@@ -17,7 +17,7 @@ class GameState:
     def __init__(self):
         self.opponentPos = Vector2(OPPONENT_START_X, OPPONENT_START_Y)
         self.ownPos = Vector2(OWN_START_X, OWN_START_Y)
-        self.ballPos = Vector2(0, 0)
+        self.ballPos = Vector2(200, 300)
         self.ballVelocity = Vector2(0, 0)
         self.opponentPoints = 0
         self.ownPoints = 0
