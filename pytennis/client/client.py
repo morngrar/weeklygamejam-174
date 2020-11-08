@@ -4,26 +4,19 @@ import pygame
 from pygame.math import Vector2
 import os
 import sys
-<<<<<<< HEAD
 from tkinter import *
 from tkinter import messagebox
 
-=======
 import pickle
 import socket
 
 from common.gamestate import GameState
 from common import networking
->>>>>>> GUI
 from client import ball
 from client import player
 from client.statusbar import Statusbar
 
-<<<<<<< HEAD
-
-=======
 pygame.init()
->>>>>>> GUI
 os.environ['SDL_VIDEO_CENTERED'] = '1'  # center window on screen
 
 SCREEN_WIDTH = 800
@@ -75,7 +68,6 @@ def dist(line, x3, y3):
     return dist
 
 
-<<<<<<< HEAD
 def show_end_screen():
     global p1_score
     global opponent_score
@@ -96,6 +88,11 @@ def show_end_screen():
         sys.exit()
     
     
+p1 = 1
+opponent = 2
+p1_score = 0
+opponent_score = 0
+winning_score = 3
    
 def reset_scores():
     global p1_score
@@ -113,47 +110,23 @@ def check_if_someone_won():
     elif(opponent_score == winning_score):
         show_end_screen()
 
-=======
->>>>>>> GUI
 def main():
 
-<<<<<<< HEAD
-def p1_serve():
-    global ball_velocity
-    tennis_ball.pos.x = SCREEN_WIDTH / 2
-    tennis_ball.pos.y = SCREEN_HEIGHT*0.75
-    ball_velocity = pygame.math.Vector3(0, 0, 0)
 
-def p2_serve():
-    global ball_velocity
-    tennis_ball.pos.x = SCREEN_WIDTH / 2
-    tennis_ball.pos.y = SCREEN_HEIGHT*0.25
-    ball_velocity = pygame.math.Vector3(0, 0, 0)
-
-p1 = 1
-opponent = 2
-p1_score = 0
-opponent_score = 0
-winning_score = 3
+    # Adds point to the respective player
+    def add_point(p):
+        global p1_score
+        global opponent_score
+        if p == 1:
+            p1_score += 1
+            print("You scored! You have ", p1_score, " points")
+            p1_serve()
+        else:
+            opponent_score += 1
+            print("Opponent scored! Opponent has ", opponent_score, " points")
+            p2_serve()
 
 
-# Adds point to the respective player
-def add_point(p):
-    global p1_score
-    global opponent_score
-    if p == 1:
-        p1_score += 1
-        print("You scored! You have ", p1_score, " points")
-        p1_serve()
-    else:
-        opponent_score += 1
-        print("Opponent scored! Opponent has ", opponent_score, " points")
-        p2_serve()
-
-
-tennis_ball = ball.Ball()
-player_p1 = player.Player(PLAYER_WIDTH, PLAYER_HEIGHT)
-=======
     #
     # pre-runloop setup
     window = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -169,7 +142,6 @@ player_p1 = player.Player(PLAYER_WIDTH, PLAYER_HEIGHT)
         tennis_ball.pos.x = SCREEN_WIDTH / 2
         tennis_ball.pos.y = SCREEN_HEIGHT*0.25
         ball_velocity = Vector2(0, 0)
->>>>>>> GUI
 
     tennis_ball = ball.Ball()
     player_p1 = player.Player(PLAYER_WIDTH, PLAYER_HEIGHT)
@@ -189,13 +161,7 @@ player_p1 = player.Player(PLAYER_WIDTH, PLAYER_HEIGHT)
     YAW_ANGLING = Vector2(-1, 0)   # positive when /
     YAW_ACCEL = 30
 
-<<<<<<< HEAD
-
-
-p1_serve()
-=======
     pygame.mouse.set_visible(False)
->>>>>>> GUI
 
     p1_serve()
 
@@ -218,25 +184,6 @@ p1_serve()
         clock.tick(100)     # refresh rate
         i += 1              # counter for paddle velocity
 
-<<<<<<< HEAD
-    ###########################################################
-    # Ball wall collision -- remove when ready for multiplayer
-    ###########################################################
-    if (    # If the ball is played out on either side 
-        tennis_ball.pos.x + tennis_ball.radius >= SCREEN_WIDTH 
-        or tennis_ball.pos.x <= 0 + tennis_ball.radius
-    ):
-        # Check whose player's side of the court the ball has been played out on
-        # If the ball was played out on the opponents side, add point to me
-        if tennis_ball.pos.y <= (SCREEN_HEIGHT/2): 
-            add_point(p1)   # Add point to "me"
-            
-        else: 
-            add_point(opponent) # Add point to opponent
-    
-    check_if_someone_won()
-=======
->>>>>>> GUI
 
         # handle x-button
         for event in pygame.event.get():
@@ -253,15 +200,7 @@ p1_serve()
         tennis_ball.pos = flip_coords(tennis_ball.pos)
         ball_velocity = state.ballVelocity
         ball_velocity = -(ball_velocity)
-        #add_point(p1)
 
-<<<<<<< HEAD
-    if tennis_ball.pos.y >= SCREEN_HEIGHT:
-        tennis_ball.pos.y = SCREEN_HEIGHT*0.75
-        ball_velocity = pygame.math.Vector3(0, 0, 0)
-        #add_point(opponent)
-    ##########################################################s
-=======
         player_p2.pos = state.opponentPos
         player_p2.pos = flip_coords(player_p2.pos)
         player_p2.pos.x -= player_p2.width
@@ -269,22 +208,26 @@ p1_serve()
         player_p2.yaw = state.opponentRacketYaw
         player_p2.yaw *= -1
 
-        # Handle movement/collision and stuff
+
+
+
 
         ###########################################################
         # Ball wall collision -- remove when ready for multiplayer
         ###########################################################
-        if (
+        if (    # If the ball is played out on either side 
             tennis_ball.pos.x + tennis_ball.radius >= SCREEN_WIDTH 
             or tennis_ball.pos.x <= 0 + tennis_ball.radius
         ):
-            tennis_ball.pos.x = SCREEN_WIDTH / 2
-            tennis_ball.pos.y = SCREEN_HEIGHT*0.75
-            ball_velocity = Vector2(0, 0)
->>>>>>> GUI
-
-        if tennis_ball.pos.y <= 0 + tennis_ball.radius:
-            ball_velocity = -(ball_velocity)
+            # Check whose player's side of the court the ball has been played out on
+            # If the ball was played out on the opponents side, add point to me
+            if tennis_ball.pos.y <= (SCREEN_HEIGHT/2): 
+                add_point(p1)   # Add point to "me"
+                
+            else: 
+                add_point(opponent) # Add point to opponent
+        
+        check_if_someone_won()
 
         if tennis_ball.pos.y >= SCREEN_HEIGHT:
             tennis_ball.pos.y = SCREEN_HEIGHT*0.75
@@ -377,11 +320,6 @@ p1_serve()
         server.sendall(pickle.dumps(state))
 
 
-<<<<<<< HEAD
-if __name__ == "__main__":
-    main()
-=======
     server.close()
     pygame.quit
     sys.exit()
->>>>>>> GUI
