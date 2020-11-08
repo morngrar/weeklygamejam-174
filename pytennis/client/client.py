@@ -101,11 +101,9 @@ def main():
         global opponent_score
         if p == 1:
             p1_score += 1
-            logger.info("You scored! You have ", p1_score, " points")
             p2_serve()
         else:
             opponent_score += 1
-            logger.info("Opponent scored! Opponent has ", opponent_score, " points")
             p1_serve()
 
     def p1_serve():
