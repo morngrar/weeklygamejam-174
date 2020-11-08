@@ -4,6 +4,11 @@ import pygame
 from pygame.math import Vector2
 import os
 import sys
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> test
 import pickle
 import socket
 
@@ -25,7 +30,7 @@ PLAYER_WIDTH = 80
 PLAYER_HEIGHT = 10
 
 import logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
 
 
@@ -63,13 +68,19 @@ def dist(line, x3, y3):
     dist = (dx*dx + dy*dy)**.5
 
     return dist
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> test
     
     
 p1 = 1
 opponent = 2
 p1_score = 0
 opponent_score = 0
-winning_score = 3
+winning_score = 15
    
 def reset_scores():
     global p1_score
@@ -77,15 +88,15 @@ def reset_scores():
     p1_score = 0
     opponent_score = 0
 
-def check_if_someone_won():
-    global winning_score
-    global p1_score
-    global opponent_score
 
+<<<<<<< HEAD
     if(p1_score == winning_score):
         print("you won")
     elif(opponent_score == winning_score):
         print("opponent won")
+=======
+        
+>>>>>>> test
 
 def main():
 
@@ -118,7 +129,41 @@ def main():
         tennis_ball.pos.y = SCREEN_HEIGHT*0.25
         ball_velocity = Vector2(0, 0)
 
+    def check_if_someone_won():
+        nonlocal state
+        global winning_score
+        global p1_score
+        global opponent_score
 
+        if p1_score == winning_score or opponent_score == winning_score:
+            state.gameOver = True
+        
+
+           
+
+    def show_end_screen():
+        global p1_score
+        global opponent_score
+        global winning_score
+        nonlocal window
+
+        font = pygame.font.SysFont('comicsans', 30, True, False)
+
+        s = pygame.Surface((SCREEN_WIDTH,SCREEN_HEIGHT))  # the size of your rect
+        s.set_alpha(128)                # alpha level
+        s.fill((255,255,255))           # this fills the entire surface
+        window.blit(s, (0,0))    # (0,0) are the top-left coordinates
+
+        winner = ""
+        if p1_score == winning_score:
+            text = font.render(("You won"), 1, (255, 255, 255))
+        else:
+            text = font.render(("You lost"), 1, (255, 255, 255))
+
+        xpos = SCREEN_WIDTH/2 - text.get_width()/2
+        ypos = SCREEN_HEIGHT/2 - text.get_height()/2
+
+        window.blit(text, (xpos, ypos))
     #
     ## pre-runloop setup
     tennis_ball = ball.Ball()
@@ -290,6 +335,9 @@ def main():
         player_p1.draw(window)
         player_p2.draw(window)
         statusbar.draw(window)
+        
+        if state.gameOver:
+            show_end_screen()
         pygame.display.update()
 
         # update state
