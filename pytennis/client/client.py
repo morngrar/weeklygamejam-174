@@ -101,25 +101,12 @@ def main():
         global opponent_score
         if p == 1:
             p1_score += 1
-<<<<<<< HEAD
-            p1_serve()
-        else:
-            opponent_score += 1
-            p2_serve()
-
-
-    # pre-runloop setup
-    window = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    pygame.display.set_caption("Tennis game")
-    clock = pygame.time.Clock()
-=======
             logger.info("You scored! You have ", p1_score, " points")
             p2_serve()
         else:
             opponent_score += 1
             logger.info("Opponent scored! Opponent has ", opponent_score, " points")
             p1_serve()
->>>>>>> main
 
     def p1_serve():
         nonlocal ball_velocity
