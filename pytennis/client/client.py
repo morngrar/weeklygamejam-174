@@ -4,9 +4,6 @@ import pygame
 from pygame.math import Vector2
 import os
 import sys
-from tkinter import *
-from tkinter import messagebox
-
 import pickle
 import socket
 
@@ -66,26 +63,6 @@ def dist(line, x3, y3):
     dist = (dx*dx + dy*dy)**.5
 
     return dist
-
-
-def show_end_screen():
-    global p1_score
-    global opponent_score
-    global winning_score
-    winner = ""
-    if p1_score == winning_score:
-        winner = "YOU WON"
-    else:
-        winner = "OPPONENT WON"
-
-    Tk().wm_withdraw() #to hide the main window
-    res = messagebox.askquestion(winner,  
-                         'New Game?') 
-    if res == 'yes' : 
-        reset_scores()          
-    else: 
-        pygame.quit
-        sys.exit()
     
     
 p1 = 1
@@ -106,9 +83,9 @@ def check_if_someone_won():
     global opponent_score
 
     if(p1_score == winning_score):
-        show_end_screen()
+        print("you won")
     elif(opponent_score == winning_score):
-        show_end_screen()
+        print("opponent won")
 
 def main():
 
@@ -124,12 +101,25 @@ def main():
         global opponent_score
         if p == 1:
             p1_score += 1
+<<<<<<< HEAD
+            p1_serve()
+        else:
+            opponent_score += 1
+            p2_serve()
+
+
+    # pre-runloop setup
+    window = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    pygame.display.set_caption("Tennis game")
+    clock = pygame.time.Clock()
+=======
             logger.info("You scored! You have ", p1_score, " points")
             p2_serve()
         else:
             opponent_score += 1
             logger.info("Opponent scored! Opponent has ", opponent_score, " points")
             p1_serve()
+>>>>>>> main
 
     def p1_serve():
         nonlocal ball_velocity
@@ -150,9 +140,6 @@ def main():
     player_p1 = player.Player(PLAYER_WIDTH, PLAYER_HEIGHT)
     player_p2 = player.Player(PLAYER_WIDTH, PLAYER_HEIGHT)
     player_p2.yaw_angle *= -1
-
-    court_color = (0, 133, 102)
-    court_stripes = (255, 255, 255)
 
     ball_velocity = Vector2()
 
@@ -211,6 +198,10 @@ def main():
         tennis_ball.pos = flip_coords(tennis_ball.pos)
         ball_velocity = state.ballVelocity
         ball_velocity = -(ball_velocity)
+        global p1_score
+        global opponent_score
+        p1_score = state.ownPoints
+        opponent_score = state.opponentPoints
 
         player_p2.pos = state.opponentPos
         player_p2.pos = flip_coords(player_p2.pos)
@@ -233,13 +224,15 @@ def main():
             or tennis_ball.pos.y + tennis_ball.radius > SCREEN_HEIGHT
             or tennis_ball.pos.y - tennis_ball.radius < 0
         ):
-            # Check whose player's side of the court the ball has been played out on
-            # If the ball was played out on the opponents side, add point to me
-            if tennis_ball.pos.y <= (SCREEN_HEIGHT/2): 
-                add_point(p1)   # Add point to "me"
-                
-            else: 
-                add_point(opponent) # Add point to opponent
+
+            if ball_velocity.y != 0:
+                # Check whose player's side of the court the ball has been played out on
+                # If the ball was played out on the opponents side, add point to me
+                if tennis_ball.pos.y <= (SCREEN_HEIGHT/2): 
+                    add_point(p1)   # Add point to "me"
+                    
+                else: 
+                    add_point(opponent) # Add point to opponent
         
             check_if_someone_won()
 
@@ -279,9 +272,6 @@ def main():
 
         tennis_ball.pos += ball_velocity * BALL_FRICTION_FACTOR
 
-        logger.debug("Ball velocity: %s", ball_velocity)
-        logger.debug("Player velocity: %s", player_p1.vel)
-
 
         # Player can't move to other side of court
         # TODO reenable at end
@@ -305,7 +295,10 @@ def main():
         else:
             player_p1.yaw = 0  # flat racket
 
-        
+        # Update status bar
+        statusbar.playerscore = p1_score
+        statusbar.opponentscore = opponent_score
+
         # Visuals
         window.blit(image_background, (0, statusbar.height))
         tennis_ball.draw(window)
@@ -315,6 +308,8 @@ def main():
         pygame.display.update()
 
         # update state
+        state.ownPoints = p1_score
+        state.opponentPoints = opponent_score
         state.ballPos = tennis_ball.pos
         state.ballVelocity = ball_velocity
         state.ownPos = player_p1.pos
