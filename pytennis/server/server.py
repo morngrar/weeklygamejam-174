@@ -4,15 +4,18 @@
 import socket
 import pickle
 import selectors
+import logging
 
 from common.gamestate import GameState
 from common import networking
 
 
 def yield_connections(listen_socket):
-    listen_socket.bind((networking.HOST, networking.PORT))
+    listen_socket.bind(("", networking.PORT))
     listen_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     listen_socket.listen()
+
+    print("Listening...")
 
     while True:
         player_one = listen_socket.accept()
@@ -55,6 +58,12 @@ def stateswap(state):
 def main():
 
     from concurrent.futures import ThreadPoolExecutor
+
+    # listen_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # conn = listen_socket.accept()
+    # conn.sendall(bytes("a test", "utf-8"))
+    # return
+
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as listen_socket:
         with ThreadPoolExecutor(max_workers=20) as pool:
