@@ -4,11 +4,6 @@ import pygame
 from pygame.math import Vector2
 import os
 import sys
-<<<<<<< HEAD
-=======
-
-
->>>>>>> test
 import pickle
 import socket
 
@@ -68,19 +63,13 @@ def dist(line, x3, y3):
     dist = (dx*dx + dy*dy)**.5
 
     return dist
-<<<<<<< HEAD
-=======
-
-
-
->>>>>>> test
     
     
 p1 = 1
 opponent = 2
 p1_score = 0
 opponent_score = 0
-winning_score = 15
+winning_score = 3#15
    
 def reset_scores():
     global p1_score
@@ -89,15 +78,7 @@ def reset_scores():
     opponent_score = 0
 
 
-<<<<<<< HEAD
-    if(p1_score == winning_score):
-        print("you won")
-    elif(opponent_score == winning_score):
-        print("opponent won")
-=======
         
->>>>>>> test
-
 def main():
 
     print("\n\nWaiting for an opponent...")
@@ -151,7 +132,7 @@ def main():
 
         s = pygame.Surface((SCREEN_WIDTH,SCREEN_HEIGHT))  # the size of your rect
         s.set_alpha(128)                # alpha level
-        s.fill((255,255,255))           # this fills the entire surface
+        s.fill((0,0,0))           # this fills the entire surface
         window.blit(s, (0,0))    # (0,0) are the top-left coordinates
 
         winner = ""
