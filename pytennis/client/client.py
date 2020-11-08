@@ -217,14 +217,6 @@ def main():
         ###########################################################
         # Ball wall collision
         ###########################################################
-        # if (    # If the ball is played out on either side 
-        #     tennis_ball.pos.x + tennis_ball.radius >= SCREEN_WIDTH 
-        #     or tennis_ball.pos.x <= 0 + tennis_ball.radius
-        # ):
-
-        # if tennis_ball.pos.y >= SCREEN_HEIGHT:
-        #     tennis_ball.pos.y = SCREEN_HEIGHT*0.75
-        #     ball_velocity = Vector2(0, 0)
 
         if (
             tennis_ball.pos.x + tennis_ball.radius < 0
@@ -280,13 +272,6 @@ def main():
 
         logger.debug("Ball velocity: %s", ball_velocity)
         logger.debug("Player velocity: %s", player_p1.vel)
-
-
-        # # Player can't move to other side of court or "out of window"
-        # if player_p1.pos.x >= SCREEN_WIDTH - (player_p1.width):
-        #     player_p1.pos.x = SCREEN_WIDTH - player_p1.width
-        # elif player_p1.pos.x <= 0:
-        #     player_p1.pos.x = 0
 
 
         # Player can't move to other side of court
