@@ -124,19 +124,21 @@ def main():
         global opponent_score
         if p == 1:
             p1_score += 1
-            print("You scored! You have ", p1_score, " points")
-            p1_serve()
+            logger.info("You scored! You have ", p1_score, " points")
+            p2_serve()
         else:
             opponent_score += 1
-            print("Opponent scored! Opponent has ", opponent_score, " points")
-            p2_serve()
+            logger.info("Opponent scored! Opponent has ", opponent_score, " points")
+            p1_serve()
 
     def p1_serve():
+        nonlocal ball_velocity
         tennis_ball.pos.x = SCREEN_WIDTH / 2
         tennis_ball.pos.y = SCREEN_HEIGHT*0.75
         ball_velocity = Vector2(0, 0)
 
     def p2_serve():
+        nonlocal ball_velocity
         tennis_ball.pos.x = SCREEN_WIDTH / 2
         tennis_ball.pos.y = SCREEN_HEIGHT*0.25
         ball_velocity = Vector2(0, 0)
@@ -164,6 +166,11 @@ def main():
     pygame.mouse.set_visible(False)
 
     p1_serve()
+
+
+
+    #
+    ## Handshake and start game loop
 
     run = True
     i = 0
@@ -217,11 +224,22 @@ def main():
 
 
         ###########################################################
-        # Ball wall collision -- remove when ready for multiplayer
+        # Ball wall collision
         ###########################################################
-        if (    # If the ball is played out on either side 
-            tennis_ball.pos.x + tennis_ball.radius >= SCREEN_WIDTH 
-            or tennis_ball.pos.x <= 0 + tennis_ball.radius
+        # if (    # If the ball is played out on either side 
+        #     tennis_ball.pos.x + tennis_ball.radius >= SCREEN_WIDTH 
+        #     or tennis_ball.pos.x <= 0 + tennis_ball.radius
+        # ):
+
+        # if tennis_ball.pos.y >= SCREEN_HEIGHT:
+        #     tennis_ball.pos.y = SCREEN_HEIGHT*0.75
+        #     ball_velocity = Vector2(0, 0)
+
+        if (
+            tennis_ball.pos.x + tennis_ball.radius < 0
+            or tennis_ball.pos.x - tennis_ball.radius > SCREEN_WIDTH
+            or tennis_ball.pos.y + tennis_ball.radius > SCREEN_HEIGHT
+            or tennis_ball.pos.y - tennis_ball.radius < 0
         ):
             # Check whose player's side of the court the ball has been played out on
             # If the ball was played out on the opponents side, add point to me
@@ -231,11 +249,8 @@ def main():
             else: 
                 add_point(opponent) # Add point to opponent
         
-        check_if_someone_won()
+            check_if_someone_won()
 
-        if tennis_ball.pos.y >= SCREEN_HEIGHT:
-            tennis_ball.pos.y = SCREEN_HEIGHT*0.75
-            ball_velocity = Vector2(0, 0)
         ##########################################################s
 
 
