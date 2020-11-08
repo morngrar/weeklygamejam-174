@@ -192,7 +192,7 @@ def main():
     statusbar = Statusbar(SCREEN_WIDTH, 30)
     
     while run:
-        clock.tick(60)     # refresh rate
+        clock.tick(100)     # refresh rate
         i += 1              # counter for paddle velocity
 
 
