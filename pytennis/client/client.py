@@ -192,7 +192,7 @@ def main():
     statusbar = Statusbar(SCREEN_WIDTH, 30)
     
     while run:
-        clock.tick(100)     # refresh rate
+        clock.tick(200)     # refresh rate
         i += 1              # counter for paddle velocity
 
 
@@ -277,7 +277,7 @@ def main():
 
         player_p1.move(*(pygame.mouse.get_pos()))   # Paddle moves after mouse
 
-        if i > 5:   # for velocity to not be 0, only sample intermittently
+        if i > 10:   # for velocity to not be 0, only sample intermittently
             player_p1.last_pos = Vector2(player_p1.pos)
             i = 0
         player_p1.vel = (player_p1.pos - player_p1.last_pos)*2
