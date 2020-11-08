@@ -242,7 +242,7 @@ def main():
             or tennis_ball.pos.y - tennis_ball.radius < 0
         ):
 
-            if ball_velocity.y != 0:
+            if ball_velocity.y != 0 and not state.gameOver:
                 # Check whose player's side of the court the ball has been played out on
                 # If the ball was played out on the opponents side, add point to me
                 if tennis_ball.pos.y <= (SCREEN_HEIGHT/2): 
