@@ -155,7 +155,7 @@ def main(p1_conn, p2_conn):
     p1_hit = False
     p2_hit = True
     while run:
-        clock.tick(25)
+        clock.tick(50)
         i+=1
         # add some deltatime instead
 
