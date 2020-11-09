@@ -1,4 +1,4 @@
 
-WIDTH = 500
+WIDTH = 550
 HEIGHT = 800
 
