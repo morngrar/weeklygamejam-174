@@ -249,7 +249,7 @@ def main(p1_conn, p2_conn):
                     ball_velocity += ((-YAW_VELOCITY) + YAW_ANGLING * active.yaw) * YAW_ACCEL 
 
                 # decelerate (slows down ball if paddle is still)
-                ball_velocity *= 0.6
+                ball_velocity *= 0.95
 
                 # if speed isn't limited, paddle can clip through ball
                 if ball_velocity.magnitude() > BALL_MAX_SPEED:       
